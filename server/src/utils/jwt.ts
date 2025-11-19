@@ -4,7 +4,6 @@ import { JWT_SECRET, JWT_REFRESH_SECRET } from "../config/env";
 // Payload type
 export interface JwtPayload {
   userId: string;
-  sessionId: string;
   role: string;
   iat?: number;
   exp?: number;

@@ -6,8 +6,8 @@ import morgan from "morgan";
 
 import logger from "./config/logger";
 
-// import authRoutes from "./routes/auth.routes";
-// import adminRoutes from "./routes/admin.routes";
+import authRoutes from "./routes/auth.route";
+import adminRoutes from "./routes/admin.route";
 // import userRoutes from "./routes/user.routes";
 // import reservationRoutes from "./routes/reservation.route";
 // import menuRoutes from "./routes/menu.routes";
@@ -29,7 +29,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -46,9 +46,9 @@ app.get("/", (req: Request, res) => {
   });
 });
 
-// app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/admin", adminRoutes);
 // app.use("/api/v1/reservation", reservationRoutes);
-// app.use("/api/v1/admin", adminRoutes);
 // app.use("/api/v1/user", userRoutes);
 // app.use("/api/v1/menu", menuRoutes);
 

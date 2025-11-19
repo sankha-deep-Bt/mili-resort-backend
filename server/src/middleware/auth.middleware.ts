@@ -26,7 +26,7 @@ export const authenticate = (
     }
 
     const decoded = verifyToken(token);
-    console.log(decoded?.role);
+    // console.log(decoded?.role);
 
     if (!decoded) {
       return res.status(403).json({ message: "Invalid or expired token" });
