@@ -1,20 +1,50 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
+import {
+  createReservation,
+  fetchMyReservation,
+} from "../services/user.service";
+import { updateReservation } from "../services/admin.service";
 
-export const getReservations = asyncHandler(
+export const getMyReservation = asyncHandler(
   async (req: Request, res: Response) => {
-    res.send("get reservations route");
+    const userId = req.user?.userId as string;
+
+    const reservation = await fetchMyReservation(userId);
+
+    return res.status(200).json({ reservation });
   }
 );
 
 export const addReservation = asyncHandler(
   async (req: Request, res: Response) => {
-    res.send("add reservation route");
+    const userId = req.user?.userId as string;
+    const { roomId, startDate, endDate } = req.body;
+
+    const newReservation = createReservation({
+      roomId,
+      userId,
+      startDate,
+      endDate,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Reservation created", ...newReservation });
   }
 );
 
 export const cancelReservation = asyncHandler(
   async (req: Request, res: Response) => {
-    res.send("cancel reservation route");
+    const userId = req.user?.userId as string;
+
+    const reservation = await updateReservation(userId, {
+      status: "cancelled",
+    });
+
+    return res.status(200).json({
+      message: "Reservation cancelled",
+      ...reservation,
+    });
   }
 );

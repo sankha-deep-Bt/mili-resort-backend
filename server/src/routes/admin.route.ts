@@ -1,41 +1,48 @@
 import { Router } from "express";
 import {
-  addEvent,
   AddRoom,
   adminLogin,
-  cancelEvent,
   ChangeRoomStatus,
-  confirmReservation,
-  deleteEvent,
-  getAllEvents,
-  getAllReservations,
+  changeReservationStatus,
+  getAllBooking,
+  getAllReservationRequest,
   getRooms,
-  rejectReservation,
-  updateEvent,
+
+  // getAllEvents,
+  // addEvent,
+  // cancelEvent,
+  // deleteEvent,
+  // updateEvent,
 } from "../controllers/admin.controller";
 import {
   addReservation,
   cancelReservation,
 } from "../controllers/reservation.controller";
+import { adminOnly, authenticate } from "../middleware/auth.middleware";
+import { validate } from "../middleware/validate.middleware";
+import { adminLoginSchema } from "../validation/admin.schema";
 
 const router = Router();
 
-router.post("/login", adminLogin);
+router.post("/login", validate(adminLoginSchema), adminLogin);
 
-router.get("/get-rooms", getRooms);
-router.post("/add-room", AddRoom);
-router.put("/change-room-status", ChangeRoomStatus);
+router.use(authenticate);
+router.use(adminOnly);
 
-router.get("/get-reservations", getAllReservations);
-router.post("/add-reservation", addReservation);
-router.put("/cancel-reservation", cancelReservation);
-router.put("/confirm-reservation", confirmReservation);
-router.put("/reject-reservation", rejectReservation);
+router.get("/rooms", getRooms);
+router.post("rooms/add-room", AddRoom);
+router.put("room/change-status", ChangeRoomStatus);
 
-router.get("/get-events", getAllEvents);
-router.post("/add-event", addEvent);
-router.put("/update-event", updateEvent);
-router.put("/cancel-event", cancelEvent);
-router.delete("/delete-event", deleteEvent);
+router.get("/booking", getAllBooking);
+router.get("/reservations", getAllReservationRequest);
+router.post("reservation/add", addReservation);
+router.put("reservation/cancel", cancelReservation);
+router.put("reservation/change-status", changeReservationStatus);
+
+// router.get("/get-events", getAllEvents);
+// router.post("/add-event", addEvent);
+// router.put("/update-event", updateEvent);
+// router.put("/cancel-event", cancelEvent);
+// router.delete("/delete-event", deleteEvent);
 
 export default router;

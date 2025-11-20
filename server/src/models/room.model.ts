@@ -4,10 +4,11 @@ export interface IRoom extends Document {
   name: string;
   capacity: number;
   type: string;
-  description: string;
-  image: string;
+  description?: string;
+  image?: string;
   price: number;
-  floor: number;
+  floor?: number;
+  isAvailable?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,6 +42,11 @@ export const RoomSchema = new Schema<IRoom>(
     floor: {
       type: Number,
       required: true,
+    },
+    isAvailable: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
   },
   {

@@ -8,9 +8,7 @@ import logger from "./config/logger";
 
 import authRoutes from "./routes/auth.route";
 import adminRoutes from "./routes/admin.route";
-// import userRoutes from "./routes/user.routes";
-// import reservationRoutes from "./routes/reservation.route";
-// import menuRoutes from "./routes/menu.routes";
+import reservationRoutes from "./routes/reservation.route";
 
 import { errorHandler } from "./middleware/errorHandler";
 
@@ -29,7 +27,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://localhost:5173"],
     credentials: true,
   })
 );
@@ -48,9 +46,7 @@ app.get("/", (req: Request, res) => {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
-// app.use("/api/v1/reservation", reservationRoutes);
-// app.use("/api/v1/user", userRoutes);
-// app.use("/api/v1/menu", menuRoutes);
+app.use("/api/v1/reservation", reservationRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

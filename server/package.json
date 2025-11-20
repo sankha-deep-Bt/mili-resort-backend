@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "create:admin": "ts-node src/scripts/adminSeed.ts",
+    "create:rooms": "ts-node src/scripts/roomSeed.ts"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.20.0",
     "morgan": "^1.10.1",
+    "nodemailer": "^7.0.10",
     "winston": "^3.18.3",
     "zod": "^4.1.12"
   },
@@ -30,6 +34,7 @@
     "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
+    "@types/nodemailer": "^7.0.4",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   }

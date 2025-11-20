@@ -5,6 +5,7 @@ export interface IReservation extends Document {
   roomId: string;
   startDate: Date;
   endDate: Date;
+  status: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +29,12 @@ export const ReservationSchema = new Schema<IReservation>(
     endDate: {
       type: Date,
       required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
   },
   {

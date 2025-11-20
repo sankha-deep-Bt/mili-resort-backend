@@ -46,11 +46,10 @@ export const authorize =
   (roles: string[]) => (req: Request, res: Response, next: NextFunction) => {
     // console.log(req.user);
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-    if (!roles.includes(req.user.role))
+    if (!roles.includes(String(req.user.role)))
       return res.status(403).json({ message: "Forbidden" });
     next();
   };
 
 export const adminOnly = authorize(["admin"]);
-export const userOnly = authorize(["user", "admin"]);
-export const riderOnly = authorize(["rider", "admin"]);
+export const userAllowed = authorize(["user", "admin"]);

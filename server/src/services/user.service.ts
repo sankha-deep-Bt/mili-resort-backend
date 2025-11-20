@@ -1,3 +1,4 @@
+import { ReservationModel } from "../models/reservation.model";
 import { UserModel } from "../models/user.model";
 import { AppError } from "../utils/AppError";
 
@@ -30,4 +31,20 @@ export const createUser = async (userData: {
 export const findByEmail = async (email: string) => {
   const user = await UserModel.findOne({ email });
   return user;
+};
+
+export const findUserById = async (userId: string) => {
+  const user = await UserModel.findById(userId);
+  return user;
+};
+
+export const createReservation = async (data: any) => {
+  const newReservation = await ReservationModel.create(data);
+  newReservation.save();
+  return newReservation;
+};
+
+export const fetchMyReservation = async (userId: string) => {
+  const reservation = await ReservationModel.find({ userId });
+  return reservation;
 };

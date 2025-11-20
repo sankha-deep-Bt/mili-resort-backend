@@ -32,12 +32,10 @@ export const login = asyncHandler(
   async (req: Request<{}, {}, LoginInput>, res: Response) => {
     const { email, password } = req.body;
 
-    const found = await findByEmail(email);
-    if (!found) {
+    const user = await findByEmail(email);
+    if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-
-    const user = found;
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
