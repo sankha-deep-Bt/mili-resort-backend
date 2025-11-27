@@ -1,3 +1,4 @@
+import { Response } from "express";
 import { ReservationModel } from "../models/reservation.model";
 import { RoomModel } from "../models/room.model";
 import { UserModel } from "../models/user.model";
@@ -44,8 +45,29 @@ export const createReservation = async (data: any) => {
   if (!room) {
     throw new AppError("Room not found", 404);
   }
-  if (!room.isAvailable) {
-    throw new AppError("Room is not available", 400);
+
+  const startDate = new Date(data.startDate);
+  const endDate = new Date(data.endDate);
+
+  if (startDate < new Date()) {
+    throw new AppError("Start date cannot be in the past", 400);
+  }
+
+  if (endDate < startDate) {
+    throw new AppError("End date cannot be before start date", 400);
+  }
+
+  const reservations = await ReservationModel.find({
+    roomId: data.roomId,
+    status: "approved",
+    $or: [
+      { startDate: { $gte: startDate, $lt: endDate } },
+      { endDate: { $gt: startDate, $lte: endDate } },
+    ],
+  });
+
+  if (reservations.length > 0) {
+    throw new AppError("Room is already reserved", 400);
   }
   const newReservation = await ReservationModel.create(data);
   newReservation.save();

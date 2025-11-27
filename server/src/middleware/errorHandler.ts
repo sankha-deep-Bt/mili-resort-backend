@@ -10,16 +10,22 @@ export const errorHandler = (
 ) => {
   const statusCode = err instanceof AppError ? err.statusCode : 500;
 
-  // Log the full error for debugging
+  // Prevent sending response twice
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  // Log safe metadata only (no circular objects)
   logger.error(`[ERROR] ${err.message}`, {
     stack: err.stack,
-    path: req.originalUrl,
+    url: req.originalUrl,
     method: req.method,
   });
 
-  res.status(statusCode).json({
+  // Send safe error response
+  return res.status(statusCode).json({
     status: err instanceof AppError ? err.status : "error",
     message: err.message || "Internal Server Error",
-    ...(process.env.NODE_ENV === "development" ? { stack: err.stack } : {}), // only show stack in dev
+    ...(process.env.NODE_ENV === "development" ? { stack: err.stack } : {}),
   });
 };

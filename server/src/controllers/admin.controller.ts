@@ -17,9 +17,9 @@ import { findByEmail, findUserById } from "../services/user.service";
 
 export const adminLogin = asyncHandler(
   async (req: Request<{}, {}, AdminLoginInput>, res: Response) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await findAdmin(username);
+    const user = await findAdmin(email);
 
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });

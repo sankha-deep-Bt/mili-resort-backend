@@ -35,7 +35,7 @@ router.put("/rooms/change-status", ChangeRoomStatus);
 
 router.get("/booking", getAllBooking);
 router.get("/reservations", getAllReservationRequest);
-router.post("/reservation/add", addReservation);
+router.post("/reservation/add/:userId", addReservation);
 router.put("/reservation/cancel", cancelReservation);
 router.put("/reservation/change-status", changeReservationStatus);
 

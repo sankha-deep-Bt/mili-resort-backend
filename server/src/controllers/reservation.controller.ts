@@ -18,10 +18,10 @@ export const getMyReservation = asyncHandler(
 
 export const addReservation = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.userId as string;
+    const userId = req.params.userId || (req.user?.userId as string);
     const { roomId, startDate, endDate } = req.body;
 
-    const newReservation = createReservation({
+    const newReservation = await createReservation({
       roomId,
       userId,
       startDate,
@@ -30,7 +30,7 @@ export const addReservation = asyncHandler(
 
     return res
       .status(200)
-      .json({ message: "Reservation created", ...newReservation });
+      .json({ message: "Reservation created", data: newReservation });
   }
 );
 

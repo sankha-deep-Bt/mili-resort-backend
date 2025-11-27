@@ -3,8 +3,8 @@ import { ReservationModel } from "../models/reservation.model";
 import { RoomModel } from "../models/room.model";
 import { AppError } from "../utils/AppError";
 
-export const findAdmin = async (username: string) => {
-  const admin = await AdminModel.findOne({ username });
+export const findAdmin = async (email: string) => {
+  const admin = await AdminModel.findOne({ email });
   return admin;
 };
 

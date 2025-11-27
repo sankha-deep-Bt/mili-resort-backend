@@ -15,5 +15,5 @@ router.post("/register", validate(registerSchema), register);
 router.post("/login", validate(loginSchema), login);
 router.post("/logout", logout);
 
-router.get("/refresh", authenticate, refreshHandler);
+router.get("/refresh", refreshHandler);
 export default router;
