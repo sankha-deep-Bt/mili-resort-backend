@@ -1,4 +1,5 @@
 import { ReservationModel } from "../models/reservation.model";
+import { RoomModel } from "../models/room.model";
 import { UserModel } from "../models/user.model";
 import { AppError } from "../utils/AppError";
 
@@ -39,6 +40,13 @@ export const findUserById = async (userId: string) => {
 };
 
 export const createReservation = async (data: any) => {
+  const room = await RoomModel.findById(data.roomId);
+  if (!room) {
+    throw new AppError("Room not found", 404);
+  }
+  if (!room.isAvailable) {
+    throw new AppError("Room is not available", 400);
+  }
   const newReservation = await ReservationModel.create(data);
   newReservation.save();
   return newReservation;
@@ -47,4 +55,21 @@ export const createReservation = async (data: any) => {
 export const fetchMyReservation = async (userId: string) => {
   const reservation = await ReservationModel.find({ userId });
   return reservation;
+};
+
+export const updateReservation = async (reservationId: string, data: any) => {
+  const reservation = await ReservationModel.findByIdAndUpdate(
+    reservationId,
+    data,
+    {
+      new: true,
+    }
+  );
+  if (!reservation) {
+    throw new AppError("Reservation not found", 404);
+  }
+  return reservation.populate({
+    path: "userId",
+    select: "name email",
+  });
 };

@@ -4,7 +4,7 @@ import {
   createReservation,
   fetchMyReservation,
 } from "../services/user.service";
-import { updateReservation } from "../services/admin.service";
+import { changeRoomStatus, updateReservation } from "../services/admin.service";
 
 export const getMyReservation = asyncHandler(
   async (req: Request, res: Response) => {
@@ -36,11 +36,13 @@ export const addReservation = asyncHandler(
 
 export const cancelReservation = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.userId as string;
+    const { roomId } = req.body;
 
-    const reservation = await updateReservation(userId, {
+    const reservation = await updateReservation(roomId, {
       status: "cancelled",
     });
+
+    const room = await changeRoomStatus(roomId, { isAvailable: true });
 
     return res.status(200).json({
       message: "Reservation cancelled",

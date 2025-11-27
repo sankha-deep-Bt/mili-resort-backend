@@ -30,14 +30,14 @@ router.use(authenticate);
 router.use(adminOnly);
 
 router.get("/rooms", getRooms);
-router.post("rooms/add-room", AddRoom);
-router.put("room/change-status", ChangeRoomStatus);
+router.post("/rooms/add-room", AddRoom);
+router.put("/rooms/change-status", ChangeRoomStatus);
 
 router.get("/booking", getAllBooking);
 router.get("/reservations", getAllReservationRequest);
-router.post("reservation/add", addReservation);
-router.put("reservation/cancel", cancelReservation);
-router.put("reservation/change-status", changeReservationStatus);
+router.post("/reservation/add", addReservation);
+router.put("/reservation/cancel", cancelReservation);
+router.put("/reservation/change-status", changeReservationStatus);
 
 // router.get("/get-events", getAllEvents);
 // router.post("/add-event", addEvent);

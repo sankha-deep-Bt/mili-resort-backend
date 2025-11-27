@@ -1,30 +1,27 @@
 import winston from "winston";
 import { LOG_LEVEL, NODE_ENV } from "./env";
 
-//  the logger is configured to log errors and all the info in combined.log and in error.log
-//  in the current setup it only logs errors in error.log
-//  if you want to log everything in combined.log change the LOG_LEVEL to info in .env
-const logger = winston.createLogger({
-  level: LOG_LEVEL,
-  format: winston.format.combine(
-    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    winston.format.errors({ stack: true }),
-    winston.format.json(),
-    winston.format.prettyPrint()
-  ),
-  defaultMeta: { service: "mili-resort-api" },
-  transports: [
-    // new winston.transports.Console(),
-    new winston.transports.File({
-      filename: "logs/error.log",
-      level: "error",
-    }),
-    new winston.transports.File({ filename: "logs/combined.log" }),
-  ],
-});
+const transports: winston.transport[] = [
+  // Always keep the error.log file
+  new winston.transports.File({
+    filename: "logs/error.log",
+    level: "error",
+  }),
+];
 
+// Add combined.log only when LOG_LEVEL is not "error"
+if (LOG_LEVEL !== "error") {
+  transports.push(
+    new winston.transports.File({
+      filename: "logs/combined.log",
+      level: LOG_LEVEL, // info or debug etc.
+    })
+  );
+}
+
+// Add console only in development
 if (NODE_ENV !== "production") {
-  logger.add(
+  transports.push(
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
@@ -36,5 +33,17 @@ if (NODE_ENV !== "production") {
     })
   );
 }
+
+const logger = winston.createLogger({
+  level: LOG_LEVEL,
+  format: winston.format.combine(
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.errors({ stack: true }),
+    winston.format.json(),
+    winston.format.prettyPrint()
+  ),
+  defaultMeta: { service: "mili-resort-api" },
+  transports,
+});
 
 export default logger;

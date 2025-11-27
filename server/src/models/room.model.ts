@@ -33,7 +33,6 @@ export const RoomSchema = new Schema<IRoom>(
     },
     image: {
       type: String,
-      required: true,
     },
     price: {
       type: Number,
@@ -45,7 +44,6 @@ export const RoomSchema = new Schema<IRoom>(
     },
     isAvailable: {
       type: Boolean,
-      required: true,
       default: true,
     },
   },

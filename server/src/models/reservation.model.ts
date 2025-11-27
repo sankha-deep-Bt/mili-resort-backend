@@ -6,6 +6,8 @@ export interface IReservation extends Document {
   startDate: Date;
   endDate: Date;
   status: string;
+  paid?: boolean;
+  paymentId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,8 +35,15 @@ export const ReservationSchema = new Schema<IReservation>(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "approved", "rejected", "canceled"],
       default: "pending",
+    },
+    paid: {
+      type: Boolean,
+      default: false,
+    },
+    paymentId: {
+      type: String,
     },
   },
   {

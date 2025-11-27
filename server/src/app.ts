@@ -9,6 +9,7 @@ import logger from "./config/logger";
 import authRoutes from "./routes/auth.route";
 import adminRoutes from "./routes/admin.route";
 import reservationRoutes from "./routes/reservation.route";
+// import paymentRoutes from "./routes/payment.route";
 
 import { errorHandler } from "./middleware/errorHandler";
 
@@ -47,6 +48,7 @@ app.get("/", (req: Request, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/reservation", reservationRoutes);
+// app.use("/api/v1/payment", paymentRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

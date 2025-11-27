@@ -15,19 +15,16 @@ export const findRoomAndUpdate = async (roomId: string, data: any) => {
   if (!room) {
     throw new AppError("Room not found", 404);
   }
-  return room.populate({
-    path: "userId",
-    select: "name email",
-  });
+  return room;
 };
 
 export const fetchReservations = async () => {
-  const reservations = await RoomModel.find({ status: "booked" });
+  const reservations = await ReservationModel.find({ status: "approved" });
   return reservations;
 };
 
 export const fetchReservationRequest = async () => {
-  const reservations = await RoomModel.find({ status: "pending" });
+  const reservations = await ReservationModel.find({ status: "pending" });
   return reservations;
 };
 
@@ -51,5 +48,15 @@ export const fetchRooms = async () => {
 
 export const createNewRoom = async (data: any) => {
   const room = await RoomModel.create(data);
+  return room;
+};
+
+export const changeRoomStatus = async (roomId: string, data: any) => {
+  const room = await RoomModel.findByIdAndUpdate(roomId, data, {
+    new: true,
+  });
+  if (!room) {
+    throw new AppError("Room not found", 404);
+  }
   return room;
 };
