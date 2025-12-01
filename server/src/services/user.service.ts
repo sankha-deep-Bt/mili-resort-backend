@@ -3,6 +3,7 @@ import { ReservationModel } from "../models/reservation.model";
 import { RoomModel } from "../models/room.model";
 import { UserModel } from "../models/user.model";
 import { AppError } from "../utils/AppError";
+import mongoose from "mongoose";
 
 export const createUser = async (userData: {
   name: string;
@@ -41,10 +42,10 @@ export const findUserById = async (userId: string) => {
 };
 
 export const createReservation = async (data: any) => {
-  const room = await RoomModel.findById(data.roomId);
-  if (!room) {
-    throw new AppError("Room not found", 404);
-  }
+  // const room = await RoomModel.findById(data.roomId);
+  // if (!room) {
+  //   throw new AppError("Room not found", 404);
+  // }
 
   const startDate = new Date(data.startDate);
   const endDate = new Date(data.endDate);
@@ -58,7 +59,7 @@ export const createReservation = async (data: any) => {
   }
 
   const reservations = await ReservationModel.find({
-    roomId: data.roomId,
+    roomId: data.room.roomId,
     status: "approved",
     $or: [
       { startDate: { $gte: startDate, $lt: endDate } },
@@ -69,14 +70,20 @@ export const createReservation = async (data: any) => {
   if (reservations.length > 0) {
     throw new AppError("Room is already reserved", 400);
   }
-  const newReservation = await ReservationModel.create(data);
+  const newReservation = await ReservationModel.create({
+    ...data,
+    // amount: room.price,
+  });
   newReservation.save();
   return newReservation;
 };
 
 export const fetchMyReservation = async (userId: string) => {
-  const reservation = await ReservationModel.find({ userId });
-  return reservation;
+  const reservations = await ReservationModel.find({
+    "user.userId": new mongoose.Types.ObjectId(userId),
+  });
+
+  return reservations;
 };
 
 export const updateReservation = async (reservationId: string, data: any) => {
@@ -94,4 +101,14 @@ export const updateReservation = async (reservationId: string, data: any) => {
     path: "userId",
     select: "name email",
   });
+};
+
+export const getReservedRoom = async (id: string) => {
+  const rooms = await RoomModel.findById(id);
+  return rooms;
+};
+
+export const findReservation = async (reservationId: string) => {
+  const room = await ReservationModel.findById(reservationId);
+  return room;
 };

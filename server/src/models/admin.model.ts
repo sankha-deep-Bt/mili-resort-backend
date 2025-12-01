@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 import { compareValue, hashValue } from "../utils/bcrypt";
 
 interface IAdmin extends Document {
-  username: string;
+  email: string;
   password: string;
 
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -11,7 +11,7 @@ interface IAdmin extends Document {
 }
 
 export const AdminSchema = new Schema<IAdmin>({
-  username: {
+  email: {
     type: String,
     required: true,
     unique: true,

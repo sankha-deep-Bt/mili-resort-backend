@@ -13,7 +13,12 @@ import { generateTokens } from "../utils/jwt";
 import { setAuthCookies } from "../utils/cookies";
 import { AdminLoginInput } from "../validation/admin.schema";
 import { sendEmail } from "../utils/nodemailer";
-import { findByEmail, findUserById } from "../services/user.service";
+import {
+  findReservation,
+  findUserById,
+  getReservedRoom,
+} from "../services/user.service";
+import { ReservationModel } from "../models/reservation.model";
 
 export const adminLogin = asyncHandler(
   async (req: Request<{}, {}, AdminLoginInput>, res: Response) => {
@@ -44,13 +49,13 @@ export const adminLogin = asyncHandler(
   }
 );
 
-export const getRooms = asyncHandler(async (req: Request, res: Response) => {
-  const rooms = await fetchRooms();
+// export const getRooms = asyncHandler(async (req: Request, res: Response) => {
+//   const rooms = await fetchRooms();
 
-  return res
-    .status(200)
-    .json({ message: "Rooms fetched successfully", ...rooms });
-});
+//   return res
+//     .status(200)
+//     .json({ message: "Rooms fetched successfully", rooms: rooms });
+// });
 
 export const AddRoom = asyncHandler(async (req: Request, res: Response) => {
   const { name, capacity, type, description, price, floor } = req.body;
@@ -80,7 +85,7 @@ export const ChangeRoomStatus = asyncHandler(
 export const getAllBooking = asyncHandler(
   async (req: Request, res: Response) => {
     const reservation = await fetchReservations();
-    res.status(200).json({ reservation });
+    res.status(200).json({ reservation: reservation });
   }
 );
 
@@ -92,27 +97,86 @@ export const getAllReservationRequest = asyncHandler(
   }
 );
 
+// export const changeReservationStatus = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const { reservationId, status } = req.body;
+
+//     const reservation = await updateReservation(reservationId, {
+//       status: status,
+//     });
+
+//     sendEmail(
+//       reservation.user?.email as string,
+//       `Reservation ${status}`,
+//       `Hello ${reservation.user?.name}, Your reservation for room ${reservation.room?.name} has been ${reservation.status}.`
+//     ).catch((err) => console.error("Email error:", err));
+
+//     res.status(200).json({
+//       message: "Reservation status updated",
+//       reservation,
+//     });
+//   }
+// );
+
 export const changeReservationStatus = asyncHandler(
   async (req: Request, res: Response) => {
-    const { roomId, userId, status } = req.body;
+    const { reservationId, status } = req.body;
 
-    await updateReservation(roomId, { status: status });
-
-    const user = await findUserById(userId);
-
-    if (status === "approved") {
-      await sendEmail(
-        user?.email as string,
-        "Reservation Approved",
-        "Your reservation has been approved"
-      );
+    const reservation = await findReservation(reservationId);
+    if (!reservation) {
+      return res.status(404).json({ message: "Reservation not found" });
     }
 
-    const room = await findRoomAndUpdate(roomId, { isAvailable: false });
+    const roomId = reservation.room?.roomId;
+    const start = reservation.startDate;
+    const end = reservation.endDate;
 
-    res.status(200).json({ message: "Reservation confirmed", room });
+    if (status === "approved") {
+      const conflict = await ReservationModel.findOne({
+        "room.roomId": roomId,
+        status: "approved",
+        _id: { $ne: reservationId },
+        startDate: { $lt: end },
+        endDate: { $gt: start },
+      });
+
+      if (conflict) {
+        return res.status(400).json({
+          message: "Room already booked for these dates!",
+          conflict: {
+            reservationId: conflict._id,
+            bookedFrom: conflict.startDate,
+            bookedTo: conflict.endDate,
+          },
+          overlapMessage: `This overlaps with an existing reservation from ${new Date(
+            conflict.startDate
+          ).toLocaleDateString()} to ${new Date(
+            conflict.endDate
+          ).toLocaleDateString()}.`,
+        });
+      }
+    }
+
+    const updated = await updateReservation(reservationId, { status });
+
+    sendEmail(
+      reservation.user?.email as string,
+      `Reservation ${status}`,
+      `Hello ${reservation.user?.name}, your reservation for room ${reservation.room?.name} has been ${status}.`
+    ).catch((err) => console.error("Email error:", err));
+
+    return res.status(200).json({
+      message: "Reservation status updated",
+      reservation: updated,
+    });
   }
 );
+
+export const getUser = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const user = await findUserById(userId);
+  res.status(200).json({ user });
+});
 
 // export const getAllEvents = asyncHandler(
 //   async (req: Request, res: Response) => {

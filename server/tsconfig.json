@@ -2,7 +2,7 @@
   "compilerOptions": {
     /* Language and Environment */
     "target": "es2020",
-    "module": "commonjs",
+    "module": "nodenext",
     "lib": ["es2020"],
     "rootDir": "./src",
     "outDir": "./dist",
@@ -16,7 +16,7 @@
     "skipLibCheck": true,
 
     /* Module Resolution */
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
 
@@ -26,8 +26,5 @@
     "sourceMap": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist"],
-  "ts-node": {
-    "esm": true
-  }
+  "exclude": ["node_modules", "dist"]
 }

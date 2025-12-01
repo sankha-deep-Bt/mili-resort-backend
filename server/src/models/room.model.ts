@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IRoom extends Document {
   name: string;
   capacity: number;
-  type: string;
+  Roomtype: string;
   description?: string;
   image?: string;
   price: number;
@@ -23,7 +23,7 @@ export const RoomSchema = new Schema<IRoom>(
       type: Number,
       required: true,
     },
-    type: {
+    Roomtype: {
       type: String,
       required: true,
     },

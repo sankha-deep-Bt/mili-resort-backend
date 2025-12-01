@@ -1,7 +1,10 @@
+import { object } from "zod";
 import { AdminModel } from "../models/admin.model";
 import { ReservationModel } from "../models/reservation.model";
 import { RoomModel } from "../models/room.model";
 import { AppError } from "../utils/AppError";
+import { findUserById } from "./user.service";
+import mongoose from "mongoose";
 
 export const findAdmin = async (email: string) => {
   const admin = await AdminModel.findOne({ email });
@@ -19,26 +22,28 @@ export const findRoomAndUpdate = async (roomId: string, data: any) => {
 };
 
 export const fetchReservations = async () => {
-  const reservations = await ReservationModel.find({ status: "approved" });
+  const reservations = await ReservationModel.find();
+
   return reservations;
 };
 
 export const fetchReservationRequest = async () => {
-  const reservations = await ReservationModel.find({ status: "pending" });
+  const reservations = await ReservationModel.find();
   return reservations;
 };
 
-export const updateReservation = async (roomId: string, data: any) => {
-  const reservation = await ReservationModel.findByIdAndUpdate(roomId, data, {
-    new: true,
-  });
+export const updateReservation = async (reservationId: string, data: any) => {
+  const reservation = await ReservationModel.findByIdAndUpdate(
+    reservationId,
+    data,
+    {
+      new: true,
+    }
+  );
   if (!reservation) {
     throw new AppError("Reservation not found", 404);
   }
-  return reservation.populate({
-    path: "userId",
-    select: "name email",
-  });
+  return reservation;
 };
 
 export const fetchRooms = async () => {

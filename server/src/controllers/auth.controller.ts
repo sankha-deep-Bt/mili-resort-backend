@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { LoginInput, RegisterInput } from "../validation/auth.schema";
-import { createUser, findByEmail } from "../services/user.service";
+import {
+  createUser,
+  findByEmail,
+  findUserById,
+} from "../services/user.service";
 import { generateTokens, verifyToken } from "../utils/jwt";
 import { clearAuthCookies, setAuthCookies } from "../utils/cookies";
 
@@ -74,6 +78,15 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   clearAuthCookies(res);
 
   return res.json({ message: "Logged out successfully" });
+});
+
+export const getProfile = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId as string;
+
+  const user = await findUserById(userId);
+  return res
+    .status(200)
+    .json({ message: "Profile fetched successfully", user });
 });
 
 export const refreshHandler = asyncHandler(

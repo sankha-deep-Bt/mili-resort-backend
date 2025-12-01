@@ -6,7 +6,7 @@ import {
   changeReservationStatus,
   getAllBooking,
   getAllReservationRequest,
-  getRooms,
+  getUser,
 
   // getAllEvents,
   // addEvent,
@@ -17,6 +17,7 @@ import {
 import {
   addReservation,
   cancelReservation,
+  getRooms,
 } from "../controllers/reservation.controller";
 import { adminOnly, authenticate } from "../middleware/auth.middleware";
 import { validate } from "../middleware/validate.middleware";
@@ -33,10 +34,12 @@ router.get("/rooms", getRooms);
 router.post("/rooms/add-room", AddRoom);
 router.put("/rooms/change-status", ChangeRoomStatus);
 
+router.get("/users", getUser);
+
 router.get("/booking", getAllBooking);
 router.get("/reservations", getAllReservationRequest);
-router.post("/reservation/add/:userId", addReservation);
-router.put("/reservation/cancel", cancelReservation);
+// router.post("/reservation/add/:userId", addReservation);
+// router.put("/reservation/cancel", cancelReservation);
 router.put("/reservation/change-status", changeReservationStatus);
 
 // router.get("/get-events", getAllEvents);
