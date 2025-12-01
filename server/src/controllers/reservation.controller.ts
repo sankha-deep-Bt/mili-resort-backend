@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
+  createEnquiry,
   createReservation,
+  fetchEnquiries,
   fetchMyReservation,
   findUserById,
   getReservedRoom,
@@ -135,5 +137,39 @@ export const cancelReservation = asyncHandler(
       message: "Reservation cancelled",
       reservation,
     });
+  }
+);
+
+export const addEnquiry = asyncHandler(async (req: Request, res: Response) => {
+  const {
+    name,
+    email,
+    phoneNumber,
+    eventType,
+    eventDate,
+    guestCount,
+    message,
+  } = req.body;
+
+  const enquiry = createEnquiry({
+    name,
+    email,
+    phoneNumber,
+    eventType,
+    eventDate,
+    guestCount,
+    message,
+  });
+
+  return res.status(200).json({ message: "Enquiry added", data: enquiry });
+});
+
+export const getEnquiries = asyncHandler(
+  async (req: Request, res: Response) => {
+    const enquiries = await fetchEnquiries();
+
+    return res
+      .status(200)
+      .json({ message: "Enquiries fetched", data: enquiries });
   }
 );
