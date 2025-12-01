@@ -254,7 +254,7 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white text-stone-800">
+    <div className="min-h-screen bg-linear-to-b from-stone-50 to-white text-stone-800">
       {/* Mobile menu button */}
       <div className="md:hidden flex items-center p-4 bg-white border-b">
         <Button variant="outline" onClick={() => setSidebarOpen(true)}>

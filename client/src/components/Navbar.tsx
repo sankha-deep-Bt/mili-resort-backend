@@ -137,7 +137,7 @@ const menuItems = [
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { user, isAuth } = useAuth(); // <-- added
+  const { isAuth } = useAuth(); // <-- added
   const [isScrolled, setIsScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
 
@@ -175,7 +175,7 @@ export default function Navbar() {
               <a
                 key={item.name}
                 href={item.href}
-                className="relative transition-all after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform hover:text-white hover:after:scale-x-100"
+                className="relative transition-all after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform hover:text-white hover:after:scale-x-100"
               >
                 {item.name}
               </a>

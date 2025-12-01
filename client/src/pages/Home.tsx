@@ -13,6 +13,8 @@ import Booking from "../components/Bookings";
 import Footer from "../components/Footer";
 import EventEnquiry from "../components/EventEnquery";
 
+import GalleryPreview from "../components/GalleryPreview";
+
 const Home = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans">
@@ -28,6 +30,7 @@ const Home = () => {
       <Packages />
       <CulturalEvents />
       <EventEnquiry />
+      <GalleryPreview />
       <MapSection />
       <Footer />
     </div>
