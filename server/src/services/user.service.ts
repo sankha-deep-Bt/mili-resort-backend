@@ -4,7 +4,7 @@ import { RoomModel } from "../models/room.model";
 import { UserModel } from "../models/user.model";
 import { AppError } from "../utils/AppError";
 import mongoose from "mongoose";
-import EventEnquiryModel from "../models/event.model";
+import EventEnquiryModel from "../models/eventEnquiry.model";
 
 export const createUser = async (userData: {
   name: string;

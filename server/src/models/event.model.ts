@@ -1,45 +1,37 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface IEventEnquiry extends Document {
-  name: string;
-  email: string;
-  phoneNumber: string;
-  eventType: string;
-  eventDate: Date;
-  guestCount: number;
-  message: string;
+export interface IEvent extends Document {
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  showcase: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export const EventEnquirySchema = new Schema<IEventEnquiry>(
+export const EventSchema = new Schema<IEvent>(
   {
-    name: {
+    title: {
       type: String,
       required: true,
     },
-    email: {
+    subtitle: {
       type: String,
       required: true,
     },
-    phoneNumber: {
+    description: {
       type: String,
       required: true,
     },
-    eventType: {
-      type: String,
-      enum: ["corporate", "pre-wedding", "wedding", "celebrations"],
-      required: true,
-    },
-    eventDate: {
-      type: Date,
-      required: true,
-    },
-    guestCount: {
-      type: Number,
-      required: true,
-    },
-    message: {
+    image: {
       type: String,
       required: true,
+    },
+    showcase: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   {
@@ -47,9 +39,36 @@ export const EventEnquirySchema = new Schema<IEventEnquiry>(
   }
 );
 
-export const EventEnquiryModel = mongoose.model<IEventEnquiry>(
-  "Event_Enquiry",
-  EventEnquirySchema
-);
+export const EventModel = mongoose.model<IEvent>("Event", EventSchema);
 
-export default EventEnquiryModel;
+export const createNewEvent = async (data: any) => {
+  const event = await EventModel.create(data);
+  return event;
+};
+
+export const fetchAllEvents = async () => {
+  const events = await EventModel.find();
+  return events;
+};
+
+export const deleteEventById = async (eventId: string) => {
+  const event = await EventModel.findByIdAndDelete(eventId);
+  return event;
+};
+
+export const updateEventById = async (eventId: string, data: any) => {
+  const event = await EventModel.findByIdAndUpdate(eventId, data, {
+    new: true,
+  });
+  return event;
+};
+
+export const findEventById = async (eventId: string) => {
+  const event = await EventModel.findById(eventId);
+  return event;
+};
+
+export const fetchHighlights = async () => {
+  const highlights = await EventModel.find({ showcase: true });
+  return highlights;
+};

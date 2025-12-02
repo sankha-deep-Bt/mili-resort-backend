@@ -7,18 +7,15 @@ import {
   getAllBooking,
   getAllReservationRequest,
   getUser,
-
-  // getAllEvents,
-  // addEvent,
-  // cancelEvent,
-  // deleteEvent,
-  // updateEvent,
 } from "../controllers/admin.controller";
 import {
-  addReservation,
-  cancelReservation,
-  getRooms,
-} from "../controllers/reservation.controller";
+  addEvent,
+  getAllEvents,
+  deleteEvent,
+  updateEvent,
+  getEvent,
+} from "../controllers/event.controller";
+import { getRooms } from "../controllers/reservation.controller";
 import { adminOnly, authenticate } from "../middleware/auth.middleware";
 import { validate } from "../middleware/validate.middleware";
 import { adminLoginSchema } from "../validation/admin.schema";
@@ -26,6 +23,11 @@ import { adminLoginSchema } from "../validation/admin.schema";
 const router = Router();
 
 router.post("/login", validate(adminLoginSchema), adminLogin);
+router.get("/event/get-all", getAllEvents);
+router.get("/event/get/:eventId", getEvent);
+router.post("/event/add", addEvent);
+router.put("/event/update", updateEvent);
+router.delete("/event/:eventId", deleteEvent);
 
 router.use(authenticate);
 router.use(adminOnly);
@@ -41,11 +43,5 @@ router.get("/reservations", getAllReservationRequest);
 // router.post("/reservation/add/:userId", addReservation);
 // router.put("/reservation/cancel", cancelReservation);
 router.put("/reservation/change-status", changeReservationStatus);
-
-// router.get("/get-events", getAllEvents);
-// router.post("/add-event", addEvent);
-// router.put("/update-event", updateEvent);
-// router.put("/cancel-event", cancelEvent);
-// router.delete("/delete-event", deleteEvent);
 
 export default router;

@@ -20,6 +20,13 @@ import {
 } from "../services/user.service";
 import { ReservationModel } from "../models/reservation.model";
 import { sendReservationEmail } from "../template/htmlTemplate";
+import {
+  createNewEvent,
+  deleteEventById,
+  fetchAllEvents,
+  findEventById,
+  updateEventById,
+} from "../models/event.model";
 
 export const adminLogin = asyncHandler(
   async (req: Request<{}, {}, AdminLoginInput>, res: Response) => {
@@ -151,25 +158,3 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await findUserById(userId);
   res.status(200).json({ user });
 });
-
-// export const getAllEvents = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     res.send("events route");
-//   }
-// );
-
-// export const addEvent = asyncHandler(async (req: Request, res: Response) => {
-//   res.send("add event route");
-// });
-
-// export const cancelEvent = asyncHandler(async (req: Request, res: Response) => {
-//   res.send("cancel event route");
-// });
-
-// export const updateEvent = asyncHandler(async (req: Request, res: Response) => {
-//   res.send("update event route");
-// });
-
-// export const deleteEvent = asyncHandler(async (req: Request, res: Response) => {
-//   res.send("delete event route");
-// });

@@ -46,7 +46,9 @@ export default function CulturalEvents() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("/api/events");
+        const res = await axios.get(
+          "http://localhost:3000/api/v1/event/highlights"
+        );
 
         if (Array.isArray(res.data) && res.data.length > 0) {
           setEvents(res.data);

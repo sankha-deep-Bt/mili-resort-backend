@@ -46,6 +46,42 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false); // Mobile sidebar toggle
   const [eventRequests, setEventRequests] = useState<any[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
+  const [eventSubTab, setEventSubTab] = useState<"add" | "enquiries">(
+    "enquiries"
+  );
+  const [newEvent, setNewEvent] = useState({
+    title: "",
+    subtitle: "",
+    description: "",
+    image: "",
+  });
+
+  const handleCreateEvent = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/admin/event/add",
+        {
+          title: newEvent.title,
+          subtitle: newEvent.subtitle,
+          description: newEvent.description,
+          image: newEvent.image,
+        }
+      );
+
+      alert("Event created successfully!");
+
+      setNewEvent({
+        title: "",
+        subtitle: "",
+        description: "",
+        image: "",
+      });
+    } catch (err) {
+      alert("Something went wrong");
+    }
+  };
 
   const [filteredRooms, setFilteredRooms] = useState<any[]>([]);
   const [filteredGuests, setFilteredGuests] = useState<any[]>([]);
@@ -834,132 +870,242 @@ export default function AdminDashboard() {
           {activeTab === "events" && (
             <Card className="border-none shadow-none">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">
-                  Event Enquiries
-                </CardTitle>
+                <CardTitle className="text-2xl font-bold">Events</CardTitle>
                 <CardDescription>
-                  Manage all event enquiries submitted by users
+                  Manage events & event enquiries
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-4">
-                {eventRequests.length === 0 ? (
-                  <p className="text-center text-stone-500 py-10">
-                    No event enquiries found.
-                  </p>
-                ) : (
-                  paginatedEvents.map((event: any) => (
-                    <div
-                      key={event._id}
-                      className="border p-4 rounded-xl shadow-sm bg-white flex flex-col gap-4"
-                    >
-                      {/* Top section */}
-                      <div className="flex justify-between">
-                        <div>
-                          <h2 className="font-semibold text-lg">
-                            {event.name}
-                          </h2>
-                          <p className="text-sm text-stone-600">
-                            {event.email} - {event.phoneNumber}
-                          </p>
-                        </div>
+              <CardContent className="space-y-6">
+                {/* ------------ SUB TABS --------------- */}
+                <div className="flex gap-3 border-b pb-2">
+                  <button
+                    onClick={() => setEventSubTab("add")}
+                    className={`px-4 py-2 rounded-md text-sm font-semibold ${
+                      eventSubTab === "add"
+                        ? "bg-primary text-white"
+                        : "bg-stone-200 text-stone-700"
+                    }`}
+                  >
+                    Add Event
+                  </button>
 
-                        <div>
-                          <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              event.status === "approved"
-                                ? "bg-green-100 text-green-700"
-                                : event.status === "rejected"
-                                ? "bg-red-100 text-red-700"
-                                : "bg-yellow-100 text-yellow-700"
-                            }`}
-                          >
-                            {event.status?.toUpperCase() || "PENDING"}
-                          </span>
-                        </div>
+                  <button
+                    onClick={() => setEventSubTab("enquiries")}
+                    className={`px-4 py-2 rounded-md text-sm font-semibold ${
+                      eventSubTab === "enquiries"
+                        ? "bg-primary text-white"
+                        : "bg-stone-200 text-stone-700"
+                    }`}
+                  >
+                    Event Enquiries
+                  </button>
+                </div>
+
+                {/* ------------ ADD EVENT SECTION --------------- */}
+                {eventSubTab === "add" && (
+                  <div className="space-y-4 p-4 border rounded-xl bg-white shadow-sm">
+                    <h2 className="text-xl font-semibold">Add New Event</h2>
+
+                    <form className="space-y-4" onSubmit={handleCreateEvent}>
+                      {/* Title */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium">Title</label>
+                        <input
+                          type="text"
+                          className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                          placeholder="Enter event title"
+                          value={newEvent.title}
+                          onChange={(e) =>
+                            setNewEvent({ ...newEvent, title: e.target.value })
+                          }
+                          required
+                        />
                       </div>
 
-                      {/* Event Details */}
-                      <div className="text-sm text-stone-700 space-y-1">
-                        <p>
-                          <span className="font-medium">Event Date:</span>{" "}
-                          {new Date(event.eventDate).toLocaleDateString()}
-                        </p>
-
-                        {event.venue && (
-                          <p>
-                            <span className="font-medium">Venue:</span>{" "}
-                            {event.venue}
-                          </p>
-                        )}
-
-                        {event.guests && (
-                          <p>
-                            <span className="font-medium">
-                              Expected Guests:
-                            </span>{" "}
-                            {event.guests}
-                          </p>
-                        )}
-
-                        {event.message && (
-                          <p className="mt-2">
-                            <span className="font-medium">Message:</span>{" "}
-                            {event.message}
-                          </p>
-                        )}
+                      {/* Subtitle */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium">Subtitle</label>
+                        <input
+                          type="text"
+                          className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                          placeholder="Enter event subtitle"
+                          value={newEvent.subtitle}
+                          onChange={(e) =>
+                            setNewEvent({
+                              ...newEvent,
+                              subtitle: e.target.value,
+                            })
+                          }
+                        />
                       </div>
 
-                      {/* Action Buttons */}
-                      {event.status === "pending" && (
-                        <div className="flex gap-3">
-                          <Button
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                            onClick={() =>
-                              handleUpdateEventStatus(event._id, "approved")
-                            }
-                          >
-                            Approve
-                          </Button>
+                      {/* Description */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium">
+                          Description
+                        </label>
+                        <textarea
+                          className="border rounded-md px-3 py-2 text-sm h-28 resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                          placeholder="Write a detailed event description..."
+                          value={newEvent.description}
+                          onChange={(e) =>
+                            setNewEvent({
+                              ...newEvent,
+                              description: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
 
-                          <Button
-                            className="bg-red-600 hover:bg-red-700 text-white"
-                            onClick={() =>
-                              handleUpdateEventStatus(event._id, "rejected")
-                            }
-                          >
-                            Reject
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  ))
+                      {/* Image URL */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium">Image URL</label>
+                        <input
+                          type="text"
+                          className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                          placeholder="https://example.com/event.jpg"
+                          value={newEvent.image}
+                          onChange={(e) =>
+                            setNewEvent({ ...newEvent, image: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="bg-primary text-white hover:bg-primary/90 px-6 py-2"
+                      >
+                        Create Event
+                      </Button>
+                    </form>
+                  </div>
                 )}
 
-                {/* Pagination Buttons */}
-                {(filteredEvents.length || eventRequests.length) >
-                  ITEMS_PER_PAGE && (
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button
-                      onClick={() => handlePrev("events")}
-                      disabled={currentPage.events === 1}
-                    >
-                      Prev
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        handleNext(
-                          "events",
-                          filteredEvents.length || eventRequests.length
-                        )
-                      }
-                      disabled={
-                        currentPage.events * ITEMS_PER_PAGE >=
-                        (filteredEvents.length || eventRequests.length)
-                      }
-                    >
-                      Next
-                    </Button>
+                {/* ------------ EVENT ENQUIRIES SECTION --------------- */}
+                {eventSubTab === "enquiries" && (
+                  <div>
+                    <h2 className="text-xl font-semibold mb-4">
+                      Event Enquiries
+                    </h2>
+
+                    {eventRequests.length === 0 ? (
+                      <p className="text-center text-stone-500 py-10">
+                        No event enquiries found.
+                      </p>
+                    ) : (
+                      paginatedEvents.map((event: any) => (
+                        <div
+                          key={event._id}
+                          className="border p-4 rounded-xl shadow-sm bg-white flex flex-col gap-4 mb-4"
+                        >
+                          {/* Top section */}
+                          <div className="flex justify-between">
+                            <div>
+                              <h2 className="font-semibold text-lg">
+                                {event.name}
+                              </h2>
+                              <p className="text-sm text-stone-600">
+                                {event.email} - {event.phoneNumber}
+                              </p>
+                            </div>
+
+                            <span
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                event.status === "approved"
+                                  ? "bg-green-100 text-green-700"
+                                  : event.status === "rejected"
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-yellow-100 text-yellow-700"
+                              }`}
+                            >
+                              {event.status?.toUpperCase() || "PENDING"}
+                            </span>
+                          </div>
+
+                          {/* Event Details */}
+                          <div className="text-sm text-stone-700 space-y-1">
+                            <p>
+                              <span className="font-medium">Event Date:</span>{" "}
+                              {new Date(event.eventDate).toLocaleDateString()}
+                            </p>
+
+                            {event.venue && (
+                              <p>
+                                <span className="font-medium">Venue:</span>{" "}
+                                {event.venue}
+                              </p>
+                            )}
+
+                            {event.guests && (
+                              <p>
+                                <span className="font-medium">
+                                  Expected Guests:
+                                </span>{" "}
+                                {event.guests}
+                              </p>
+                            )}
+
+                            {event.message && (
+                              <p className="mt-2">
+                                <span className="font-medium">Message:</span>{" "}
+                                {event.message}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Action Buttons */}
+                          {event.status === "pending" && (
+                            <div className="flex gap-3">
+                              <Button
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                                onClick={() =>
+                                  handleUpdateEventStatus(event._id, "approved")
+                                }
+                              >
+                                Approve
+                              </Button>
+
+                              <Button
+                                className="bg-red-600 hover:bg-red-700 text-white"
+                                onClick={() =>
+                                  handleUpdateEventStatus(event._id, "rejected")
+                                }
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+
+                    {(filteredEvents.length || eventRequests.length) >
+                      ITEMS_PER_PAGE && (
+                      <div className="flex justify-end gap-2 mt-4">
+                        <Button
+                          onClick={() => handlePrev("events")}
+                          disabled={currentPage.events === 1}
+                        >
+                          Prev
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            handleNext(
+                              "events",
+                              filteredEvents.length || eventRequests.length
+                            )
+                          }
+                          disabled={
+                            currentPage.events * ITEMS_PER_PAGE >=
+                            (filteredEvents.length || eventRequests.length)
+                          }
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>
