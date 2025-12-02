@@ -5,8 +5,8 @@ import { authenticate, userAllowed } from "../middleware/auth.middleware";
 const router = Router();
 
 // User must be logged in for payment
-router.use(authenticate);
-router.use(userAllowed);
+// router.use(authenticate);
+// router.use(userAllowed);
 
 router.post("/create-order", createOrder);
 router.post("/verify-payment", verifyPayment);

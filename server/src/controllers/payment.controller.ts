@@ -1,21 +1,37 @@
 import { Request, Response } from "express";
 import crypto from "crypto";
 import razorpay from "../config/razorpay";
-
-import { updateReservation } from "../services/user.service";
+import { findReservation, updateReservation } from "../services/user.service";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { amount, currency = "INR", receipt } = req.body;
+    const { reservationId } = req.body;
+    const currency = "INR";
 
-    if (!amount) {
-      return res.status(400).json({ message: "Amount is required" });
+    const reservation = await findReservation(reservationId);
+    if (!reservation) {
+      return res.status(404).json({ message: "Reservation not found" });
     }
 
+    if (!reservation.room || !reservation.room.price) {
+      return res.status(400).json({ message: "Room price missing" });
+    }
+
+    const startDate = new Date(reservation.startDate);
+    const endDate = new Date(reservation.endDate);
+
+    // ensure minimum 1 night
+    const days = Math.max(
+      1,
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    const amount = reservation.room.price * days;
+
     const options = {
-      amount: amount * 100, // convert to paise
+      amount: amount * 100,
       currency,
-      receipt: receipt || `rcpt_${Date.now()}`,
+      receipt: `rcpt_${reservationId}_${Date.now()}`.slice(0, 40),
     };
 
     const order = await razorpay.orders.create(options);
@@ -23,8 +39,10 @@ export const createOrder = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       order,
+      amount,
+      days,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Order creation error:", error);
     return res.status(500).json({
       success: false,
@@ -46,10 +64,14 @@ export const verifyPayment = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Missing payment details" });
     }
 
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      throw new Error("Missing RAZORPAY_KEY_SECRET in env");
+    }
+
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
 
@@ -61,7 +83,6 @@ export const verifyPayment = async (req: Request, res: Response) => {
         .json({ success: false, message: "Invalid payment signature" });
     }
 
-    // OPTIONAL — if you want to update reservation status
     if (reservationId) {
       await updateReservation(reservationId, {
         paymentStatus: "paid",

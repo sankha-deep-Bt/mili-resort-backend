@@ -30,54 +30,54 @@ export const getRooms = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({ message: "Rooms fetched successfully", rooms });
 });
 
-export const addReservationWithEmail = asyncHandler(
-  async (req: Request, res: Response) => {
-    const {
-      name,
-      email,
-      phoneNumber,
-      startDate,
-      endDate,
-      adult,
-      children,
-      roomId,
-    } = req.body;
+// export const addReservationWithEmail = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const {
+//       name,
+//       email,
+//       phoneNumber,
+//       startDate,
+//       endDate,
+//       adult,
+//       children,
+//       roomId,
+//     } = req.body;
 
-    const room = await getReservedRoom(roomId);
-    if (!room) return res.status(404).json({ error: "Room not found" });
-    if (room.isAvailable === false) {
-      return res
-        .status(400)
-        .json({ error: "Room is not available at the moment" });
-    }
+//     const room = await getReservedRoom(roomId);
+//     if (!room) return res.status(404).json({ error: "Room not found" });
+//     if (room.isAvailable === false) {
+//       return res
+//         .status(400)
+//         .json({ error: "Room is not available at the moment" });
+//     }
 
-    // Create reservation (embed user + room)
-    const newReservation = await createReservation({
-      user: {
-        userId: null,
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-      },
-      room: {
-        roomId: room._id,
-        name: room.name,
-        type: room.Roomtype,
-        price: room.price,
-        description: room.description,
-      },
-      adult: adult,
-      children: children,
-      startDate,
-      endDate,
-    });
+//     // Create reservation (embed user + room)
+//     const newReservation = await createReservation({
+//       user: {
+//         userId: null,
+//         name: name,
+//         email: email,
+//         phoneNumber: phoneNumber,
+//       },
+//       room: {
+//         roomId: room._id,
+//         name: room.name,
+//         type: room.Roomtype,
+//         price: room.price,
+//         description: room.description,
+//       },
+//       adult: adult,
+//       children: children,
+//       startDate,
+//       endDate,
+//     });
 
-    return res.status(200).json({
-      message: "Reservation created",
-      data: newReservation,
-    });
-  }
-);
+//     return res.status(200).json({
+//       message: "Reservation created",
+//       data: newReservation,
+//     });
+//   }
+// );
 
 export const addReservation = asyncHandler(
   async (req: Request, res: Response) => {
@@ -94,6 +94,12 @@ export const addReservation = asyncHandler(
     // Fetch room details
     const room = await getReservedRoom(roomId);
     if (!room) return res.status(404).json({ error: "Room not found" });
+
+    if (room.isAvailable === false) {
+      return res
+        .status(400)
+        .json({ error: "Room is not available at the moment" });
+    }
 
     // Create reservation (embed user + room)
     const newReservation = await createReservation({

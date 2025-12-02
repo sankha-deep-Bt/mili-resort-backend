@@ -19,6 +19,7 @@ import {
   getReservedRoom,
 } from "../services/user.service";
 import { ReservationModel } from "../models/reservation.model";
+import { sendReservationEmail } from "../template/htmlTemplate";
 
 export const adminLogin = asyncHandler(
   async (req: Request<{}, {}, AdminLoginInput>, res: Response) => {
@@ -49,14 +50,6 @@ export const adminLogin = asyncHandler(
   }
 );
 
-// export const getRooms = asyncHandler(async (req: Request, res: Response) => {
-//   const rooms = await fetchRooms();
-
-//   return res
-//     .status(200)
-//     .json({ message: "Rooms fetched successfully", rooms: rooms });
-// });
-
 export const AddRoom = asyncHandler(async (req: Request, res: Response) => {
   const { name, capacity, type, description, price, floor } = req.body;
 
@@ -74,11 +67,12 @@ export const AddRoom = asyncHandler(async (req: Request, res: Response) => {
 
 export const ChangeRoomStatus = asyncHandler(
   async (req: Request, res: Response) => {
-    const { roomId, isAvailable } = req.body;
+    const roomId = req.params.roomId;
+    const { status } = req.body;
 
-    const room = await findRoomAndUpdate(roomId, { isAvailable: isAvailable });
+    const room = await findRoomAndUpdate(roomId, { isAvailable: status });
 
-    res.status(200).json({ ...room });
+    res.status(200).json({ room });
   }
 );
 
@@ -96,27 +90,6 @@ export const getAllReservationRequest = asyncHandler(
     res.status(200).json({ ...bookingRequest });
   }
 );
-
-// export const changeReservationStatus = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     const { reservationId, status } = req.body;
-
-//     const reservation = await updateReservation(reservationId, {
-//       status: status,
-//     });
-
-//     sendEmail(
-//       reservation.user?.email as string,
-//       `Reservation ${status}`,
-//       `Hello ${reservation.user?.name}, Your reservation for room ${reservation.room?.name} has been ${reservation.status}.`
-//     ).catch((err) => console.error("Email error:", err));
-
-//     res.status(200).json({
-//       message: "Reservation status updated",
-//       reservation,
-//     });
-//   }
-// );
 
 export const changeReservationStatus = asyncHandler(
   async (req: Request, res: Response) => {
@@ -158,11 +131,12 @@ export const changeReservationStatus = asyncHandler(
     }
 
     const updated = await updateReservation(reservationId, { status });
+    const emailHtml = await sendReservationEmail(reservation, status);
 
     sendEmail(
       reservation.user?.email as string,
       `Reservation ${status}`,
-      `Hello ${reservation.user?.name}, your reservation for room ${reservation.room?.name} has been ${status}.`
+      emailHtml
     ).catch((err) => console.error("Email error:", err));
 
     return res.status(200).json({

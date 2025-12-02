@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { GALLERY_SHOWCASE } from "../data/galleryShowcase";
+import { GALLERY_SHOWCASE } from "../../data/galleryShowcase";
 
 export default function GalleryPreview() {
   // Duplicate items to match the 10-item grid in the screenshot (2 rows of 5)

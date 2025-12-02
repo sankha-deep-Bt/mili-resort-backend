@@ -1,11 +1,11 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { Badge } from "../components/ui/badge";
-import { ScrollArea } from "../components/ui/scroll-area";
+import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, UtensilsCrossed } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Button } from "../ui/button";
 
 const menuCategories = [
   {

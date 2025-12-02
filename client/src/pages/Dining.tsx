@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/home/Navbar";
+import Footer from "../components/home/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "../components/ui/badge";
 import { ScrollArea } from "../components/ui/scroll-area";

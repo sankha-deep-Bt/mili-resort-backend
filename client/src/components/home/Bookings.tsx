@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { CheckCircle2, X } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 // IMPORTANT: Set your Backend URL
 const API_BASE = "http://localhost:3000/api/v1";

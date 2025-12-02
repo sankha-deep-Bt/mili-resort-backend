@@ -13,6 +13,8 @@ import Gallery from "./pages/Gallery";
 import Dining from "./pages/Dining";
 import Rooms from "./pages/Rooms";
 import SignUp from "./pages/SignUp";
+import PaymentPage from "./pages/PaymentPage";
+import Success from "./pages/Success";
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/delivery-policy" element={<DeliveryPolicy />} />
       <Route path="/refund-policy" element={<RefundPolicy />} />
+      <Route path="/payment" element={<PaymentPage />} />
+      <Route path="/success" element={<Success />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

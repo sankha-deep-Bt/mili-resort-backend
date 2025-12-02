@@ -33,6 +33,7 @@ export default function AdminDashboard() {
     fetchBookings,
     fetchRooms,
     updateBookingStatus,
+    updateRoomStatus,
   } = useAdmin();
   const navigate = useNavigate();
 
@@ -49,6 +50,52 @@ export default function AdminDashboard() {
   const [filteredRooms, setFilteredRooms] = useState<any[]>([]);
   const [filteredGuests, setFilteredGuests] = useState<any[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+
+  const ITEMS_PER_PAGE = 4;
+
+  const [currentPage, setCurrentPage] = useState({
+    bookings: 1,
+    rooms: 1,
+    guests: 1,
+    events: 1,
+  });
+
+  const paginatedBookings = useMemo(() => {
+    const start = (currentPage.bookings - 1) * ITEMS_PER_PAGE;
+    return filteredBookings.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredBookings, currentPage.bookings]);
+
+  const paginatedRooms = useMemo(() => {
+    const data = filteredRooms.length ? filteredRooms : rooms || [];
+    const start = (currentPage.rooms - 1) * ITEMS_PER_PAGE;
+    return data.slice(start, start + ITEMS_PER_PAGE);
+  }, [rooms, filteredRooms, currentPage.rooms]);
+
+  const paginatedGuests = useMemo(() => {
+    const start = (currentPage.guests - 1) * ITEMS_PER_PAGE;
+    return filteredGuests.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredGuests, currentPage.guests]);
+
+  const paginatedEvents = useMemo(() => {
+    const data = filteredEvents.length ? filteredEvents : eventRequests || [];
+    const start = (currentPage.events - 1) * ITEMS_PER_PAGE;
+    return data.slice(start, start + ITEMS_PER_PAGE);
+  }, [eventRequests, filteredEvents, currentPage.events]);
+
+  const handleNext = (tab: keyof typeof currentPage, totalItems: number) => {
+    const maxPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    setCurrentPage((prev) => ({
+      ...prev,
+      [tab]: Math.min(prev[tab] + 1, maxPage),
+    }));
+  };
+
+  const handlePrev = (tab: keyof typeof currentPage) => {
+    setCurrentPage((prev) => ({
+      ...prev,
+      [tab]: Math.max(prev[tab] - 1, 1),
+    }));
+  };
 
   // GLOBAL SEARCH (Option D)
   useEffect(() => {
@@ -234,6 +281,21 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error(error);
       alert("Failed to update event status");
+    }
+  };
+
+  const handleToggleRoom = (roomId: string, status: boolean) => {
+    try {
+      const res = axios.put(
+        `http://localhost:3000/api/v1/admin/rooms/${roomId}/change-status`,
+        {
+          status,
+        }
+      );
+      updateRoomStatus?.(roomId, status);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to toggle room availability");
     }
   };
 
@@ -424,6 +486,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Tabs */}
+
           {activeTab === "bookings" && (
             <Card>
               <CardHeader>
@@ -442,125 +505,147 @@ export default function AdminDashboard() {
                     No bookings found
                   </div>
                 ) : (
-                  <table className="min-w-full divide-y divide-stone-100">
-                    <thead className="bg-stone-50">
-                      <tr>
-                        <th>Guest</th>
-                        <th>Room</th>
-                        <th>Dates</th>
-                        <th>Nights</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-stone-100">
-                      {filteredBookings.map((booking: any) => {
-                        const nights = calcNights(
-                          booking.startDate,
-                          booking.endDate
-                        );
-                        const total = (booking.room?.price || 0) * nights;
-                        return (
-                          <tr key={booking._id} className="hover:bg-stone-50">
-                            <td className="px-4 py-4 align-top">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center text-sm font-semibold">
-                                  {booking.user?.name?.[0] || "U"}
-                                </div>
-                                <div>
-                                  <div className="font-medium">
-                                    {booking.user?.name}
+                  <>
+                    <table className="min-w-full divide-y divide-stone-100">
+                      <thead className="bg-stone-50">
+                        <tr>
+                          <th>Guest</th>
+                          <th>Room</th>
+                          <th>Dates</th>
+                          <th>Nights</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-stone-100">
+                        {paginatedBookings.map((booking: any) => {
+                          const nights = calcNights(
+                            booking.startDate,
+                            booking.endDate
+                          );
+                          const total = (booking.room?.price || 0) * nights;
+                          return (
+                            <tr key={booking._id} className="hover:bg-stone-50">
+                              <td className="px-4 py-4 align-top">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center text-sm font-semibold">
+                                    {booking.user?.name?.[0] || "U"}
                                   </div>
-                                  <div className="text-sm text-stone-500">
-                                    {booking.user?.email}
+                                  <div>
+                                    <div className="font-medium">
+                                      {booking.user?.name}
+                                    </div>
+                                    <div className="text-sm text-stone-500">
+                                      {booking.user?.email}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 align-top">
-                              <div className="font-medium">
-                                {booking.room?.name || "—"}
-                              </div>
-                              <div className="text-sm text-stone-500">
-                                {booking.room?.type || ""}
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 align-top">
-                              <div className="text-sm">
-                                <div>
-                                  <span className="font-medium">In:</span>{" "}
-                                  {booking.startDate
-                                    ? new Date(
-                                        booking.startDate
-                                      ).toLocaleDateString()
-                                    : "—"}
+                              </td>
+                              <td className="px-4 py-4 align-top">
+                                <div className="font-medium">
+                                  {booking.room?.name || "—"}
                                 </div>
-                                <div>
-                                  <span className="font-medium">Out:</span>{" "}
-                                  {booking.endDate
-                                    ? new Date(
-                                        booking.endDate
-                                      ).toLocaleDateString()
-                                    : "—"}
+                                <div className="text-sm text-stone-500">
+                                  {booking.room?.type || ""}
                                 </div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 align-top">
-                              <div className="text-sm font-medium">
-                                {nights}
-                              </div>
-                              <div className="text-xs text-stone-500">
-                                {booking.adult} adults, {booking.children}{" "}
-                                children
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 align-top text-right">
-                              <div className="font-semibold">
-                                ₹{total.toLocaleString("en-IN")}
-                              </div>
-                              <div className="text-xs text-stone-500">
-                                ₹{booking.room?.price}/night
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 align-top text-right">
-                              <div className="flex items-center justify-end">
-                                <Badge
-                                  variant={
-                                    booking.status === "cancelled"
-                                      ? "destructive"
-                                      : booking.status === "approved"
-                                      ? "default"
-                                      : "outline"
-                                  }
-                                  className="px-3 py-1 rounded-full text-sm"
-                                >
-                                  {booking.status}
-                                </Badge>
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 align-top text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                {booking.status === "pending" && (
-                                  <>
+                              </td>
+                              <td className="px-4 py-4 align-top">
+                                <div className="text-sm">
+                                  <div>
+                                    <span className="font-medium">In:</span>{" "}
+                                    {booking.startDate
+                                      ? new Date(
+                                          booking.startDate
+                                        ).toLocaleDateString()
+                                      : "—"}
+                                  </div>
+                                  <div>
+                                    <span className="font-medium">Out:</span>{" "}
+                                    {booking.endDate
+                                      ? new Date(
+                                          booking.endDate
+                                        ).toLocaleDateString()
+                                      : "—"}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 align-top">
+                                <div className="text-sm font-medium">
+                                  {nights}
+                                </div>
+                                <div className="text-xs text-stone-500">
+                                  {booking.adult} adults, {booking.children}{" "}
+                                  children
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 align-top text-right">
+                                <div className="font-semibold">
+                                  ₹{total.toLocaleString("en-IN")}
+                                </div>
+                                <div className="text-xs text-stone-500">
+                                  ₹{booking.room?.price}/night
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 align-top text-right">
+                                <div className="flex items-center justify-end">
+                                  <Badge
+                                    variant={
+                                      booking.status === "cancelled"
+                                        ? "destructive"
+                                        : booking.status === "approved"
+                                        ? "default"
+                                        : "outline"
+                                    }
+                                    className="px-3 py-1 rounded-full text-sm"
+                                  >
+                                    {booking.status}
+                                  </Badge>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 align-top text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  {booking.status === "pending" && (
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        onClick={() =>
+                                          handleAcceptBooking(
+                                            booking._id,
+                                            booking.room?._id
+                                          )
+                                        }
+                                        disabled={!!isProcessing[booking._id]}
+                                        className="bg-green-600 hover:bg-green-700"
+                                      >
+                                        {isProcessing[booking._id]
+                                          ? "..."
+                                          : "Accept"}
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() =>
+                                          handleRejectBooking(
+                                            booking.room?._id,
+                                            booking.user?._id,
+                                            booking._id,
+                                            "cancelled"
+                                          )
+                                        }
+                                        disabled={!!isProcessing[booking._id]}
+                                      >
+                                        {isProcessing[booking._id]
+                                          ? "..."
+                                          : "Reject"}
+                                      </Button>
+                                    </>
+                                  )}
+                                  {booking.status === "approved" && (
                                     <Button
                                       size="sm"
-                                      onClick={() =>
-                                        handleAcceptBooking(
-                                          booking._id,
-                                          booking.room?._id
-                                        )
-                                      }
-                                      disabled={!!isProcessing[booking._id]}
-                                      className="bg-green-600 hover:bg-green-700"
-                                    >
-                                      {isProcessing[booking._id]
-                                        ? "..."
-                                        : "Accept"}
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="destructive"
+                                      variant="outline"
+                                      className="border-red-600 text-red-600 hover:bg-red-50"
                                       onClick={() =>
                                         handleRejectBooking(
                                           booking.room?._id,
@@ -573,47 +658,48 @@ export default function AdminDashboard() {
                                     >
                                       {isProcessing[booking._id]
                                         ? "..."
-                                        : "Reject"}
+                                        : "Cancel"}
                                     </Button>
-                                  </>
-                                )}
-                                {booking.status === "approved" && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="border-red-600 text-red-600 hover:bg-red-50"
-                                    onClick={() =>
-                                      handleRejectBooking(
-                                        booking.room?._id,
-                                        booking.user?._id,
-                                        booking._id,
-                                        "cancelled"
-                                      )
-                                    }
-                                    disabled={!!isProcessing[booking._id]}
-                                  >
-                                    {isProcessing[booking._id]
-                                      ? "..."
-                                      : "Cancel"}
-                                  </Button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    {/* Pagination Buttons */}
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button
+                        onClick={() => handlePrev("bookings")}
+                        disabled={currentPage.bookings === 1}
+                      >
+                        Prev
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          handleNext("bookings", filteredBookings.length)
+                        }
+                        disabled={
+                          currentPage.bookings * ITEMS_PER_PAGE >=
+                          filteredBookings.length
+                        }
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
           )}
 
           {activeTab === "rooms" && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {rooms && rooms.length > 0 ? (
-                (filteredRooms.length ? filteredRooms : rooms).map(
-                  (room: any) => (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                {rooms && rooms.length > 0 ? (
+                  paginatedRooms.map((room: any) => (
                     <Card key={room._id} className="overflow-hidden">
                       <div
                         className="h-44 bg-cover bg-center"
@@ -636,19 +722,55 @@ export default function AdminDashboard() {
                         <p className="text-sm text-stone-500 mb-3">
                           Capacity: {room.capacity} • Floor: {room.floor}
                         </p>
-                        <Button
-                          onClick={() => navigate(`/admin/rooms/${room._id}`)}
-                        >
-                          Manage
-                        </Button>
+                        {room.isAvailable === true ? (
+                          <Button
+                            className="w-full"
+                            variant="default"
+                            onClick={() => handleToggleRoom(room._id, false)}
+                          >
+                            Mark as Unavailable
+                          </Button>
+                        ) : (
+                          <Button
+                            className="w-full"
+                            variant="destructive"
+                            onClick={() => handleToggleRoom(room._id, true)}
+                          >
+                            Mark as Available
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
-                  )
-                )
-              ) : (
-                <div className="text-stone-500">No rooms available.</div>
-              )}
-            </div>
+                  ))
+                ) : (
+                  <div className="text-stone-500">No rooms available.</div>
+                )}
+              </div>
+
+              {/* Pagination Buttons */}
+              <div className="flex justify-end gap-2 mt-4">
+                <Button
+                  onClick={() => handlePrev("rooms")}
+                  disabled={currentPage.rooms === 1}
+                >
+                  Prev
+                </Button>
+                <Button
+                  onClick={() =>
+                    handleNext(
+                      "rooms",
+                      filteredRooms.length ? filteredRooms.length : rooms.length
+                    )
+                  }
+                  disabled={
+                    currentPage.rooms * ITEMS_PER_PAGE >=
+                    (filteredRooms.length ? filteredRooms.length : rooms.length)
+                  }
+                >
+                  Next
+                </Button>
+              </div>
+            </>
           )}
 
           {activeTab === "guests" && (
@@ -658,38 +780,10 @@ export default function AdminDashboard() {
                 <CardDescription>Unique guests from bookings</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {/* {Array.from(
-                  new Set((bookings || []).map((b: any) => b.user?.email))
-                ).map((email: any) => {
-                  const guest = (bookings || []).find(
-                    (b: any) => b.user?.email === email
-                  );
-                  return (
-                    <div
-                      key={email}
-                      className="flex items-center justify-between p-3 bg-white border rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center text-sm font-semibold">
-                          {guest?.user?.name?.[0] || "U"}
-                        </div>
-                        <div>
-                          <div className="font-medium">{guest?.user?.name}</div>
-                          <div className="text-sm text-stone-500">
-                            {guest?.user?.email}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-sm text-stone-500">
-                        {guest?.user?.phone || "—"}
-                      </div>
-                    </div>
-                  );
-                })} */}
                 {filteredGuests.length === 0 ? (
                   <p className="text-stone-500">No guests found.</p>
                 ) : (
-                  filteredGuests.map((guest: any) => (
+                  paginatedGuests.map((guest: any) => (
                     <div
                       key={guest.email}
                       className="flex items-center justify-between p-3 bg-white border rounded-lg"
@@ -701,7 +795,7 @@ export default function AdminDashboard() {
                         <div>
                           <div className="font-medium">{guest?.name}</div>
                           <div className="text-sm text-stone-500">
-                            {guest?.email}
+                            {guest?.email} - {guest?.phoneNumber}
                           </div>
                         </div>
                       </div>
@@ -711,9 +805,32 @@ export default function AdminDashboard() {
                     </div>
                   ))
                 )}
+                {/* Pagination Buttons */}
+                {filteredGuests.length > ITEMS_PER_PAGE && (
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                      onClick={() => handlePrev("guests")}
+                      disabled={currentPage.guests === 1}
+                    >
+                      Prev
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        handleNext("guests", filteredGuests.length)
+                      }
+                      disabled={
+                        currentPage.guests * ITEMS_PER_PAGE >=
+                        filteredGuests.length
+                      }
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
+
           {activeTab === "events" && (
             <Card className="border-none shadow-none">
               <CardHeader>
@@ -731,97 +848,119 @@ export default function AdminDashboard() {
                     No event enquiries found.
                   </p>
                 ) : (
-                  (filteredEvents.length ? filteredEvents : eventRequests).map(
-                    (event: any) => (
-                      <div
-                        key={event._id}
-                        className="border p-4 rounded-xl shadow-sm bg-white flex flex-col gap-4"
-                      >
-                        {/* Top section */}
-                        <div className="flex justify-between">
-                          <div>
-                            <h2 className="font-semibold text-lg">
-                              {event.name}
-                            </h2>
-                            <p className="text-sm text-stone-600">
-                              {event.email}
-                            </p>
-                            <p className="text-sm text-stone-600">
-                              {event.phone}
-                            </p>
-                          </div>
-
-                          <div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                event.status === "approved"
-                                  ? "bg-green-100 text-green-700"
-                                  : event.status === "rejected"
-                                  ? "bg-red-100 text-red-700"
-                                  : "bg-yellow-100 text-yellow-700"
-                              }`}
-                            >
-                              {event.status?.toUpperCase() || "PENDING"}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Event Details */}
-                        <div className="text-sm text-stone-700 space-y-1">
-                          <p>
-                            <span className="font-medium">Event Date:</span>{" "}
-                            {new Date(event.eventDate).toLocaleDateString()}
+                  paginatedEvents.map((event: any) => (
+                    <div
+                      key={event._id}
+                      className="border p-4 rounded-xl shadow-sm bg-white flex flex-col gap-4"
+                    >
+                      {/* Top section */}
+                      <div className="flex justify-between">
+                        <div>
+                          <h2 className="font-semibold text-lg">
+                            {event.name}
+                          </h2>
+                          <p className="text-sm text-stone-600">
+                            {event.email} - {event.phoneNumber}
                           </p>
-
-                          {event.venue && (
-                            <p>
-                              <span className="font-medium">Venue:</span>{" "}
-                              {event.venue}
-                            </p>
-                          )}
-
-                          {event.guests && (
-                            <p>
-                              <span className="font-medium">
-                                Expected Guests:
-                              </span>{" "}
-                              {event.guests}
-                            </p>
-                          )}
-
-                          {event.message && (
-                            <p className="mt-2">
-                              <span className="font-medium">Message:</span>{" "}
-                              {event.message}
-                            </p>
-                          )}
                         </div>
 
-                        {/* Action Buttons */}
-                        {event.status === "pending" && (
-                          <div className="flex gap-3">
-                            <Button
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                              onClick={() =>
-                                handleUpdateEventStatus(event._id, "approved")
-                              }
-                            >
-                              Approve
-                            </Button>
+                        <div>
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                              event.status === "approved"
+                                ? "bg-green-100 text-green-700"
+                                : event.status === "rejected"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-yellow-100 text-yellow-700"
+                            }`}
+                          >
+                            {event.status?.toUpperCase() || "PENDING"}
+                          </span>
+                        </div>
+                      </div>
 
-                            <Button
-                              className="bg-red-600 hover:bg-red-700 text-white"
-                              onClick={() =>
-                                handleUpdateEventStatus(event._id, "rejected")
-                              }
-                            >
-                              Reject
-                            </Button>
-                          </div>
+                      {/* Event Details */}
+                      <div className="text-sm text-stone-700 space-y-1">
+                        <p>
+                          <span className="font-medium">Event Date:</span>{" "}
+                          {new Date(event.eventDate).toLocaleDateString()}
+                        </p>
+
+                        {event.venue && (
+                          <p>
+                            <span className="font-medium">Venue:</span>{" "}
+                            {event.venue}
+                          </p>
+                        )}
+
+                        {event.guests && (
+                          <p>
+                            <span className="font-medium">
+                              Expected Guests:
+                            </span>{" "}
+                            {event.guests}
+                          </p>
+                        )}
+
+                        {event.message && (
+                          <p className="mt-2">
+                            <span className="font-medium">Message:</span>{" "}
+                            {event.message}
+                          </p>
                         )}
                       </div>
-                    )
-                  )
+
+                      {/* Action Buttons */}
+                      {event.status === "pending" && (
+                        <div className="flex gap-3">
+                          <Button
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() =>
+                              handleUpdateEventStatus(event._id, "approved")
+                            }
+                          >
+                            Approve
+                          </Button>
+
+                          <Button
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                            onClick={() =>
+                              handleUpdateEventStatus(event._id, "rejected")
+                            }
+                          >
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+
+                {/* Pagination Buttons */}
+                {(filteredEvents.length || eventRequests.length) >
+                  ITEMS_PER_PAGE && (
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                      onClick={() => handlePrev("events")}
+                      disabled={currentPage.events === 1}
+                    >
+                      Prev
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        handleNext(
+                          "events",
+                          filteredEvents.length || eventRequests.length
+                        )
+                      }
+                      disabled={
+                        currentPage.events * ITEMS_PER_PAGE >=
+                        (filteredEvents.length || eventRequests.length)
+                      }
+                    >
+                      Next
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>

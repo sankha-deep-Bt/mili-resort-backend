@@ -69,13 +69,13 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 mt-8"
         >
           <Link to="/rooms">
-            <button className="px-8 py-4 border-2 border-white text-xs font-bold tracking-widest hover:bg-white hover:text-black transition-colors uppercase">
+            <button className="px-8 py-4 border-2 rounded-full border-white text-xs font-bold tracking-widest hover:bg-white hover:text-black transition-colors uppercase">
               Explore Rooms
             </button>
           </Link>
 
           <Link to="/gallery">
-            <button className="px-8 py-4 bg-primary border-2 border-primary text-white text-xs font-bold tracking-widest hover:bg-primary/80 transition-colors uppercase">
+            <button className="px-8 py-4 bg-primary border-2 rounded-full border-primary text-white text-xs font-bold tracking-widest hover:bg-primary/80 transition-colors uppercase">
               View Gallery
             </button>
           </Link>

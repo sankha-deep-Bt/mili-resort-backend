@@ -50,6 +50,11 @@ export const useAdmin = () => {
       prev.map((b) => (b._id === id ? { ...b, status } : b))
     );
   };
+  const updateRoomStatus = (id: string, status: boolean) => {
+    setRooms((prev) =>
+      prev.map((b) => (b._id === id ? { ...b, isAvailable: status } : b))
+    );
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -68,5 +73,6 @@ export const useAdmin = () => {
     fetchRooms,
     fetchBookings,
     updateBookingStatus,
+    updateRoomStatus,
   };
 };

@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
   addReservation,
-  addReservationWithEmail,
   cancelReservation,
   getMyReservation,
   getRooms,

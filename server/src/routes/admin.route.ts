@@ -32,7 +32,7 @@ router.use(adminOnly);
 
 router.get("/rooms", getRooms);
 router.post("/rooms/add-room", AddRoom);
-router.put("/rooms/change-status", ChangeRoomStatus);
+router.put("/rooms/:roomId/change-status", ChangeRoomStatus);
 
 router.get("/users", getUser);
 

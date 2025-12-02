@@ -154,7 +154,7 @@ export default function Villas() {
         <div className="text-center mt-16">
           <a
             href="#"
-            className="inline-block px-10 py-5 border-2 border-zinc-700 text-zinc-700 text-xs font-bold tracking-widest uppercase hover:bg-zinc-700 hover:text-white transition-colors"
+            className="inline-block px-10 py-5 border-2 rounded-full border-zinc-700 text-zinc-700 text-xs font-bold tracking-widest uppercase hover:bg-zinc-700 hover:text-white transition-colors"
           >
             Explore All Villas
           </a>

@@ -121,7 +121,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { useAuth } from "../hooks/useAuth"; // <-- added
+import { useAuth } from "../../hooks/useAuth"; // <-- added
 
 const menuItems = [
   { name: "Home", href: "/" },
