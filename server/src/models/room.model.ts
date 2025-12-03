@@ -3,13 +3,13 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IRoom extends Document {
   name: string;
   Roomtype: string;
-  capacity: number;
-  occupancyDetails?: string;
-  description?: string;
-  image?: string;
   price: number;
+  image: string[];
+  description: string;
+  occupancyDetails?: string;
   priceDetails?: string;
-  isAvailable?: boolean;
+  maxInStock?: number;
+  inStock?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,10 +20,7 @@ export const RoomSchema = new Schema<IRoom>(
       type: String,
       required: true,
     },
-    capacity: {
-      type: Number,
-      required: true,
-    },
+
     occupancyDetails: {
       type: String,
     },
@@ -36,7 +33,8 @@ export const RoomSchema = new Schema<IRoom>(
       required: true,
     },
     image: {
-      type: String,
+      type: [String],
+      required: true,
     },
     price: {
       type: Number,
@@ -45,9 +43,11 @@ export const RoomSchema = new Schema<IRoom>(
     priceDetails: {
       type: String,
     },
-    isAvailable: {
-      type: Boolean,
-      default: true,
+    maxInStock: {
+      type: Number,
+    },
+    inStock: {
+      type: Number,
     },
   },
   {

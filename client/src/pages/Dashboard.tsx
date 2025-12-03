@@ -52,6 +52,8 @@ export default function CustomerDashboard() {
       setBookings(
         Array.isArray(reservationsRes.data) ? reservationsRes.data : []
       );
+      console.log("Reservations", reservationsRes.data);
+      console.log("Bookings", bookings);
     } catch (err) {
       console.error("Error fetching reservations:", err);
     }
@@ -137,6 +139,7 @@ export default function CustomerDashboard() {
             {/* Overview Tab */}
             {activeTab === "overview" && (
               <Overview
+                setActiveTab={setActiveTab}
                 profile={profile}
                 bookings={bookings}
                 fetchReservations={fetchData}
@@ -149,7 +152,7 @@ export default function CustomerDashboard() {
             )}
 
             {/* Food & Beverages Tab */}
-            {activeTab === "dining" && <Menu />}
+            {activeTab === "dining" && <Menu setActiveTab={setActiveTab} />}
 
             {/* Billing & Invoices Tab */}
             {activeTab === "billing" && <Bills bookings={bookings} />}

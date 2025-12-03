@@ -191,7 +191,7 @@ export default function AdminDashboard() {
 
   const handleDeleteBooking = async () => {
     try {
-      const res = await axios.delete(
+      await axios.delete(
         "http://localhost:3000/api/v1/reservation/delete-cancel"
       );
       await fetchBookings?.();
