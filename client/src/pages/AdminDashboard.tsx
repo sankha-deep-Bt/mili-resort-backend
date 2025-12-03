@@ -189,6 +189,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteBooking = async () => {
+    try {
+      const res = await axios.delete(
+        "http://localhost:3000/api/v1/reservation/delete-cancel"
+      );
+      await fetchBookings?.();
+      alert("Successfully deleted cancelled bookings");
+    } catch (error) {
+      alert("Failed to delete bookings");
+    }
+  };
+
   const handleUpdateEventStatus = async (eventId: string, status: string) => {
     try {
       await axios.patch(
@@ -281,6 +293,7 @@ export default function AdminDashboard() {
             isProcessing={isProcessing}
             onAccept={handleAcceptBooking}
             onReject={handleRejectBooking}
+            onDelete={handleDeleteBooking}
           />
         )}
 

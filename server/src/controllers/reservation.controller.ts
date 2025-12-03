@@ -6,7 +6,11 @@ import {
   findUserById,
   getReservedRoom,
 } from "../services/user.service";
-import { fetchRooms, updateReservation } from "../services/admin.service";
+import {
+  deleteCancelledReservations,
+  fetchRooms,
+  updateReservation,
+} from "../services/admin.service";
 import { createEnquiry, fetchEnquiries } from "../models/eventEnquiry.model";
 
 export const getMyReservation = asyncHandler(
@@ -109,7 +113,6 @@ export const addReservation = asyncHandler(
         name: room.name,
         type: room.Roomtype,
         price: room.price,
-        description: room.description,
       },
       adult: adult,
       children: children,
@@ -172,5 +175,12 @@ export const getEnquiries = asyncHandler(
     return res
       .status(200)
       .json({ message: "Enquiries fetched", data: enquiries });
+  }
+);
+
+export const deleteReservations = asyncHandler(
+  async (req: Request, res: Response) => {
+    const reservations = await deleteCancelledReservations();
+    return res.status(200).json({ message: "All reservations deleted" });
   }
 );

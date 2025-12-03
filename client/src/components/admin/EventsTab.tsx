@@ -204,16 +204,20 @@ export default function EventsTab({ events, onUpdateStatus }: any) {
                 </div>
               ))
             )}
-            <div className="flex justify-end gap-2 mt-4">
+            <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
               <Button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
+                size="sm"
+                variant="outline"
               >
                 Prev
               </Button>
               <Button
                 onClick={() => setCurrentPage((p) => p + 1)}
                 disabled={currentPage * ITEMS_PER_PAGE >= events.length}
+                size="sm"
+                variant="outline"
               >
                 Next
               </Button>

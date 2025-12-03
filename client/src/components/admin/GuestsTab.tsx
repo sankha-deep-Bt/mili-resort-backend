@@ -52,12 +52,16 @@ export default function GuestsTab({ guests }: any) {
             <Button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
+              size="sm"
+              variant="outline"
             >
               Prev
             </Button>
             <Button
               onClick={() => setCurrentPage((p) => p + 1)}
               disabled={currentPage * ITEMS_PER_PAGE >= guests.length}
+              size="sm"
+              variant="outline"
             >
               Next
             </Button>

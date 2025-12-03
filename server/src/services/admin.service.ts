@@ -65,3 +65,10 @@ export const changeRoomStatus = async (roomId: string, data: any) => {
   }
   return room;
 };
+
+export const deleteCancelledReservations = async () => {
+  const reservations = await ReservationModel.deleteMany({
+    status: "cancelled",
+  });
+  return reservations;
+};

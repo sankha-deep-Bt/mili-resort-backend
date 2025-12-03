@@ -36,13 +36,16 @@ export default function RoomsTab({ rooms, onToggleStatus }: any) {
               <CardHeader>
                 <CardTitle>{room.name}</CardTitle>
                 <CardDescription>
-                  {room.type} • ₹{room.price?.toLocaleString("en-IN")}/night
+                  {room.Roomtype} • ₹{room.price?.toLocaleString("en-IN")}/night{" "}
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                <p>{room.description}</p>
+                <p>{room.priceDetails}</p>
                 <p className="text-sm text-stone-500 mb-3">
-                  Capacity: {room.capacity} • Floor: {room.floor}
+                  Capacity: {room.capacity} {room.occupancyDetails}
                 </p>
+
                 <Button
                   className="w-full"
                   variant={room.isAvailable ? "default" : "destructive"}
@@ -63,12 +66,16 @@ export default function RoomsTab({ rooms, onToggleStatus }: any) {
         <Button
           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
           disabled={currentPage === 1}
+          size="sm"
+          variant="outline"
         >
           Prev
         </Button>
         <Button
           onClick={() => setCurrentPage((p) => p + 1)}
           disabled={currentPage * ITEMS_PER_PAGE >= rooms.length}
+          size="sm"
+          variant="outline"
         >
           Next
         </Button>

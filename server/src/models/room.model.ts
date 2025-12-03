@@ -2,12 +2,13 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IRoom extends Document {
   name: string;
-  capacity: number;
   Roomtype: string;
+  capacity: number;
+  occupancyDetails?: string;
   description?: string;
   image?: string;
   price: number;
-  floor?: number;
+  priceDetails?: string;
   isAvailable?: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -22,6 +23,9 @@ export const RoomSchema = new Schema<IRoom>(
     capacity: {
       type: Number,
       required: true,
+    },
+    occupancyDetails: {
+      type: String,
     },
     Roomtype: {
       type: String,
@@ -38,9 +42,8 @@ export const RoomSchema = new Schema<IRoom>(
       type: Number,
       required: true,
     },
-    floor: {
-      type: Number,
-      required: true,
+    priceDetails: {
+      type: String,
     },
     isAvailable: {
       type: Boolean,
