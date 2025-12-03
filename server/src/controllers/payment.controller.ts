@@ -90,6 +90,11 @@ export const verifyPayment = async (req: Request, res: Response) => {
       });
     }
 
+    await updateReservation(reservationId, {
+      paymentStatus: "paid",
+      paymentId: razorpay_payment_id,
+    });
+
     return res.status(200).json({
       success: true,
       message: "Payment verified successfully",

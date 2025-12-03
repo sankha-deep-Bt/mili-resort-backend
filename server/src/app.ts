@@ -11,6 +11,7 @@ import adminRoutes from "./routes/admin.route";
 import reservationRoutes from "./routes/reservation.route";
 import eventRoutes from "./routes/event.route";
 import paymentRoutes from "./routes/payment.route";
+import galleryRoutes from "./routes/gallery.route";
 
 import { errorHandler } from "./middleware/errorHandler";
 
@@ -33,6 +34,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:5174",
+      "https://milliresort.in",
     ],
     credentials: true,
   })
@@ -55,6 +57,7 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/reservation", reservationRoutes);
 app.use("/api/v1/event", eventRoutes);
 app.use("/api/v1/payment", paymentRoutes);
+app.use("/api/v1/gallery", galleryRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

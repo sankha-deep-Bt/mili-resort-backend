@@ -1,18 +1,13 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
-  createEnquiry,
   createReservation,
-  fetchEnquiries,
   fetchMyReservation,
   findUserById,
   getReservedRoom,
 } from "../services/user.service";
-import {
-  changeRoomStatus,
-  fetchRooms,
-  updateReservation,
-} from "../services/admin.service";
+import { fetchRooms, updateReservation } from "../services/admin.service";
+import { createEnquiry, fetchEnquiries } from "../models/eventEnquiry.model";
 
 export const getMyReservation = asyncHandler(
   async (req: Request, res: Response) => {

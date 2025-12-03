@@ -1,10 +1,8 @@
-import { Response } from "express";
 import { ReservationModel } from "../models/reservation.model";
 import { RoomModel } from "../models/room.model";
 import { UserModel } from "../models/user.model";
 import { AppError } from "../utils/AppError";
 import mongoose from "mongoose";
-import EventEnquiryModel from "../models/eventEnquiry.model";
 
 export const createUser = async (userData: {
   name: string;
@@ -112,17 +110,4 @@ export const getReservedRoom = async (id: string) => {
 export const findReservation = async (reservationId: string) => {
   const room = await ReservationModel.findById(reservationId);
   return room;
-};
-
-export const createEnquiry = async (data: any) => {
-  const newEnquiry = await EventEnquiryModel.create({
-    ...data,
-  });
-  newEnquiry.save();
-  return newEnquiry;
-};
-
-export const fetchEnquiries = async () => {
-  const enquiries = await EventEnquiryModel.find();
-  return enquiries;
 };

@@ -53,3 +53,16 @@ export const EventEnquiryModel = mongoose.model<IEventEnquiry>(
 );
 
 export default EventEnquiryModel;
+
+export const createEnquiry = async (data: any) => {
+  const newEnquiry = await EventEnquiryModel.create({
+    ...data,
+  });
+  newEnquiry.save();
+  return newEnquiry;
+};
+
+export const fetchEnquiries = async () => {
+  const enquiries = await EventEnquiryModel.find();
+  return enquiries;
+};

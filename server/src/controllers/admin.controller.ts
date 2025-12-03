@@ -21,12 +21,12 @@ import {
 import { ReservationModel } from "../models/reservation.model";
 import { sendReservationEmail } from "../template/htmlTemplate";
 import {
-  createNewEvent,
-  deleteEventById,
-  fetchAllEvents,
-  findEventById,
-  updateEventById,
-} from "../models/event.model";
+  createNewGallery,
+  deleteGalleryImageById,
+  fetchAllGalleryImages,
+  fetchShowcaseImages,
+  findGalleryImage,
+} from "../models/gallery.model";
 
 export const adminLogin = asyncHandler(
   async (req: Request<{}, {}, AdminLoginInput>, res: Response) => {
@@ -158,3 +158,39 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await findUserById(userId);
   res.status(200).json({ user });
 });
+
+// export const addGalleryImage = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const { image } = req.body;
+
+//     const newGallery = createNewGallery({ image });
+
+//     return res.status(200).json({ message: "Image added", newGallery });
+//   }
+// );
+
+// export const deleteGalleryImage = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const imageId = req.params.imageId;
+//     const image = await findGalleryImage(imageId);
+//     if (!image) {
+//       return res.status(404).json({ message: "Image not found" });
+//     }
+//     await deleteGalleryImageById(imageId);
+//     return res.status(200).json({ message: "Image deleted" });
+//   }
+// );
+
+// export const getAllImages = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const images = await fetchAllGalleryImages();
+//     res.status(200).json({ images });
+//   }
+// );
+
+// export const getShowcaseImages = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const images = await fetchShowcaseImages();
+//     res.status(200).json({ images });
+//   }
+// );
