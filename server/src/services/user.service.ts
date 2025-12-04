@@ -40,11 +40,63 @@ export const findUserById = async (userId: string) => {
   return user;
 };
 
-export const createReservation = async (data: any) => {
-  // const room = await RoomModel.findById(data.roomId);
-  // if (!room) {
-  //   throw new AppError("Room not found", 404);
-  // }
+// export const createReservation = async (data: any) => {
+//   // const room = await RoomModel.findById(data.roomId);
+//   // if (!room) {
+//   //   throw new AppError("Room not found", 404);
+//   // }
+
+//   const startDate = new Date(data.startDate);
+//   const endDate = new Date(data.endDate);
+
+//   if (startDate < new Date()) {
+//     throw new AppError("Start date cannot be in the past", 400);
+//   }
+
+//   if (endDate < startDate) {
+//     throw new AppError("End date cannot be before start date", 400);
+//   }
+
+//   const reservations = await ReservationModel.find({
+//     roomId: data.room.roomId,
+//     status: "approved",
+//     $or: [
+//       { startDate: { $gte: startDate, $lt: endDate } },
+//       { endDate: { $gt: startDate, $lte: endDate } },
+//     ],
+//   });
+
+//   if (reservations.length > 0) {
+//     throw new AppError("Room is already reserved", 400);
+//   }
+//   const newReservation = await ReservationModel.create({
+//     ...data,
+//     // amount: room.price,
+//   });
+//   newReservation.save();
+//   return newReservation;
+// };
+
+export const createReservation = async (data: {
+  user: {
+    userId: string;
+    name: string;
+    email: string;
+    phoneNumber: string;
+  };
+  roomIds: string[];
+  startDate: string | Date;
+  endDate: string | Date;
+  adult: number;
+  children: number;
+  notes?: string;
+  amount?: number;
+}) => {
+  // Ensure roomIds is an array
+  const roomIdsArray = Array.isArray(data.roomIds) ? data.roomIds : [];
+  if (roomIdsArray.length === 0) {
+    throw new AppError("No rooms selected", 400);
+  }
 
   const startDate = new Date(data.startDate);
   const endDate = new Date(data.endDate);
@@ -52,105 +104,68 @@ export const createReservation = async (data: any) => {
   if (startDate < new Date()) {
     throw new AppError("Start date cannot be in the past", 400);
   }
-
   if (endDate < startDate) {
     throw new AppError("End date cannot be before start date", 400);
   }
 
-  const reservations = await ReservationModel.find({
-    roomId: data.room.roomId,
+  // Check for overlapping reservations
+  const overlappingReservations = await ReservationModel.find({
+    roomId: { $in: roomIdsArray },
     status: "approved",
     $or: [
       { startDate: { $gte: startDate, $lt: endDate } },
       { endDate: { $gt: startDate, $lte: endDate } },
+      { startDate: { $lte: startDate }, endDate: { $gte: endDate } }, // fully overlapping
     ],
   });
 
-  if (reservations.length > 0) {
-    throw new AppError("Room is already reserved", 400);
+  if (overlappingReservations.length > 0) {
+    throw new AppError(
+      "One or more rooms are already reserved for these dates",
+      400
+    );
   }
+
+  // Fetch room details
+  const rooms: any[] = [];
+  for (const roomId of roomIdsArray) {
+    const room = await RoomModel.findById(roomId);
+    if (!room) {
+      throw new AppError(`Room not found: ${roomId}`, 404);
+    }
+
+    rooms.push({
+      roomId: room._id.toString(),
+      name: room.name,
+      type: room.Roomtype,
+      price: room.price,
+      description: room.description,
+    });
+  }
+
+  // Calculate total amount if not provided
+  const totalAmount = data.amount ?? rooms.reduce((sum, r) => sum + r.price, 0);
+
+  // Create reservation
   const newReservation = await ReservationModel.create({
-    ...data,
-    // amount: room.price,
+    user: data.user,
+    rooms, // array of objects
+    adult: data.adult,
+    children: data.children,
+    notes: data.notes || "",
+    startDate,
+    endDate,
+    amount: totalAmount,
+    status: "pending", // default status
   });
-  newReservation.save();
+
   return newReservation;
 };
 
-// Add this import (if your file is a service)
-// import { RoomModel } from './room.model';
-
-// --- UPDATED createReservation FUNCTION ---
-// export const createReservation = async (data: any) => {
-//   // ... (Date Validation and initial checks remain the same) ...
-
-//   const requestedRooms = data.rooms;
-//   const roomIds = requestedRooms.map((r: any) => r.roomId);
-//   const startDate = new Date(data.startDate);
-//   const endDate = new Date(data.endDate);
-
-//   // 1. Fetch total room stock for all requested rooms
-//   // We assume RoomModel stores the maximum number of rooms available for that type.
-//   const roomStockDetails = await RoomModel.find({ _id: { $in: roomIds } });
-//   if (roomStockDetails.length !== roomIds.length) {
-//     throw new AppError("One or more room IDs are invalid or not found.", 404);
-//   }
-//   // const roomStockMap = new Map(
-//   //   roomStockDetails.map((room) => [room._id.toString(), room.stock || 1])
-//   // );
-
-//   // 2. Fetch conflicting reservations (as before)
-//   const conflictingReservations = await ReservationModel.find({
-//     "rooms.roomId": { $in: roomIds },
-//     status: "approved",
-//     $or: [
-//       { startDate: { $gte: startDate, $lt: endDate } },
-//       { endDate: { $gt: startDate, $lte: endDate } },
-//       { startDate: { $lte: startDate }, endDate: { $gte: endDate } },
-//     ],
-//   });
-
-//   // 3. Robust Quantity Conflict Check
-//   for (const requestedRoom of requestedRooms) {
-//     const { roomId, name, quantity: requestedQuantity } = requestedRoom;
-//     // const totalStock = roomStockMap.get(roomId.toString()) || 1;
-
-//     let reservedCount = 0;
-
-//     // Calculate reserved quantity during the conflicting period
-//     conflictingReservations.forEach((reservation: any) => {
-//       reservation.rooms.forEach((bookedRoom: any) => {
-//         if (bookedRoom.roomId.toString() === roomId.toString()) {
-//           reservedCount += bookedRoom.quantity || 1;
-//         }
-//       });
-//     });
-
-//     // CRITICAL CHECK: Does the requested amount + reserved amount exceed total stock?
-//     // if (reservedCount + requestedQuantity > totalStock) {
-//     //   throw new AppError(
-//     //     `Only ${
-//     //       totalStock - reservedCount
-//     //     } of room '${name}' are available for the requested period.`,
-//     //     400
-//     //   );
-//     // }
-//   }
-
-//   // 4. Create Reservation
-//   const newReservation = await ReservationModel.create({ ...data });
-
-//   return newReservation;
-// };
-
 export const fetchMyReservation = async (userId: string) => {
-  const reservations = await ReservationModel.find({
-    "user.userId": new mongoose.Types.ObjectId(userId),
-  });
-
-  return reservations;
+  const reservation = await ReservationModel.find({ "user.userId": userId });
+  return reservation;
 };
-
 export const updateReservation = async (reservationId: string, data: any) => {
   const reservation = await ReservationModel.findByIdAndUpdate(
     reservationId,

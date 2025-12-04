@@ -79,7 +79,9 @@ export const refreshThunk = createAsyncThunk(
   "auth/refresh",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get("http://localhost:3000/api/v1/auth/refresh");
+      const res = await axios.get("http://localhost:3000/api/v1/auth/refresh", {
+        withCredentials: true,
+      });
 
       if (!res.data?.accessToken) {
         return rejectWithValue("No token");

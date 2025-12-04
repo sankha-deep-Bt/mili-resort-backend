@@ -8,7 +8,7 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 
-export default function RoomsTab({ rooms, onToggleStatus }: any) {
+export default function RoomsTab({ rooms, handleEditRoom }: any) {
   const ITEMS_PER_PAGE = 4;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -27,9 +27,7 @@ export default function RoomsTab({ rooms, onToggleStatus }: any) {
                 className="h-44 bg-cover bg-center"
                 style={{
                   backgroundImage: `url(${
-                    room.image?.startsWith("http")
-                      ? room.image
-                      : "/fallback.jpg"
+                    room.image?.length > 0 ? room.image : "/fallback.jpg"
                   })`,
                 }}
               />
@@ -48,12 +46,9 @@ export default function RoomsTab({ rooms, onToggleStatus }: any) {
 
                 <Button
                   className="w-full"
-                  variant={room.isAvailable ? "default" : "destructive"}
-                  onClick={() => onToggleStatus(room._id, !room.isAvailable)}
+                  onClick={() => handleEditRoom(room._id)}
                 >
-                  {room.isAvailable
-                    ? "Mark as Unavailable"
-                    : "Mark as Available"}
+                  Edit Room
                 </Button>
               </CardContent>
             </Card>

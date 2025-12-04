@@ -152,12 +152,53 @@ export default function AdminDashboard() {
     navigate("/");
   };
 
-  const handleAcceptBooking = async (id: string, roomId: string) => {
+  // const handleAcceptBooking = async (id: string, roomId: string) => {
+  //   setIsProcessing((p) => ({ ...p, [id]: true }));
+  //   try {
+  //     await axios.put(
+  //       "http://localhost:3000/api/v1/admin/reservation/change-status",
+  //       { reservationId: id, roomId, status: "approved" }
+  //     );
+  //     updateBookingStatus?.(id, "approved");
+  //     await fetchBookings?.();
+  //   } catch (err: any) {
+  //     alert(err?.response?.data?.message || "Accept failed");
+  //   } finally {
+  //     setIsProcessing((p) => ({ ...p, [id]: false }));
+  //   }
+  // };
+
+  // const handleRejectBooking = async (
+  //   roomId: string,
+  //   userId: string,
+  //   id: string,
+  //   targetStatus: "cancelled" | "rejected" = "cancelled"
+  // ) => {
+  //   setIsProcessing((p) => ({ ...p, [id]: true }));
+  //   try {
+  //     await axios.put(
+  //       "http://localhost:3000/api/v1/admin/reservation/change-status",
+  //       { reservationId: id, roomId, userId, status: targetStatus }
+  //     );
+  //     updateBookingStatus?.(id, targetStatus);
+  //     await fetchBookings?.();
+  //   } catch (err: any) {
+  //     alert(err?.response?.data?.message || "Reject failed");
+  //   } finally {
+  //     setIsProcessing((p) => ({ ...p, [id]: false }));
+  //   }
+  // };
+
+  // --- In your parent component (e.g., DashboardAdmin) ---
+
+  // Removed 'roomId' from arguments, only passing 'id'
+  const handleAcceptBooking = async (id: string) => {
     setIsProcessing((p) => ({ ...p, [id]: true }));
     try {
+      // 🟢 Send only the reservation ID and the desired status
       await axios.put(
         "http://localhost:3000/api/v1/admin/reservation/change-status",
-        { reservationId: id, roomId, status: "approved" }
+        { reservationId: id, status: "approved" } // Removed roomId
       );
       updateBookingStatus?.(id, "approved");
       await fetchBookings?.();
@@ -168,17 +209,17 @@ export default function AdminDashboard() {
     }
   };
 
+  // Removed 'roomId' and 'userId' from arguments, only passing 'id' and 'targetStatus'
   const handleRejectBooking = async (
-    roomId: string,
-    userId: string,
-    id: string,
-    targetStatus: "cancelled" | "rejected" = "cancelled"
+    id: string, // Changed position and name for clarity
+    targetStatus: "cancelled" | "rejected" = "rejected" // Default to 'rejected' for admin action
   ) => {
     setIsProcessing((p) => ({ ...p, [id]: true }));
     try {
+      // 🟢 Send only the reservation ID and the desired status
       await axios.put(
         "http://localhost:3000/api/v1/admin/reservation/change-status",
-        { reservationId: id, roomId, userId, status: targetStatus }
+        { reservationId: id, status: targetStatus } // Removed roomId and userId (backend doesn't need userId for this endpoint)
       );
       updateBookingStatus?.(id, targetStatus);
       await fetchBookings?.();
@@ -188,7 +229,6 @@ export default function AdminDashboard() {
       setIsProcessing((p) => ({ ...p, [id]: false }));
     }
   };
-
   const handleDeleteBooking = async () => {
     try {
       await axios.delete(
@@ -214,13 +254,12 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleToggleRoom = (roomId: string, status: boolean) => {
+  const handleEditRoom = (roomId: string, data: any) => {
     try {
-      axios.put(
-        `http://localhost:3000/api/v1/admin/rooms/${roomId}/change-status`,
-        { status }
-      );
-      updateRoomStatus?.(roomId, status);
+      axios.put(`http://localhost:3000/api/v1/admin/rooms/${roomId}/edit`, {
+        data,
+      });
+      updateRoomStatus?.(roomId, data);
     } catch (error) {
       alert("Failed to toggle room availability");
     }
@@ -300,7 +339,7 @@ export default function AdminDashboard() {
         {activeTab === "rooms" && (
           <RoomsTab
             rooms={filteredRooms.length ? filteredRooms : rooms || []}
-            onToggleStatus={handleToggleRoom}
+            onToggleStatus={handleEditRoom}
           />
         )}
 

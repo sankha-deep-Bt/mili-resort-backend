@@ -26,6 +26,7 @@ export default function CustomerDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const [bookings, setBookings] = useState<any[]>([]);
+  const [rooms, setRooms] = useState<any[]>([]);
 
   const [refresh, setRefresh] = useState(false);
 
@@ -58,6 +59,20 @@ export default function CustomerDashboard() {
       console.error("Error fetching reservations:", err);
     }
   };
+  const fetchRooms = async () => {
+    try {
+      const roomsRes = await axios.get(
+        "http://localhost:3000/api/v1/reservation/rooms"
+      );
+      setRooms(Array.isArray(roomsRes.data.rooms) ? roomsRes.data.rooms : []);
+    } catch (err) {
+      console.error("Error fetching rooms:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -143,12 +158,16 @@ export default function CustomerDashboard() {
                 profile={profile}
                 bookings={bookings}
                 fetchReservations={fetchData}
+                Rooms={rooms}
               />
             )}
 
             {/* Rooms Tab */}
             {activeTab === "rooms" && (
-              <Rooms onBookingCompleted={handleBookingCompleted} />
+              <Rooms
+                onBookingCompleted={handleBookingCompleted}
+                Rooms={rooms}
+              />
             )}
 
             {/* Food & Beverages Tab */}

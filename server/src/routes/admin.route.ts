@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   AddRoom,
   adminLogin,
-  ChangeRoomStatus,
+  editRoom,
   changeReservationStatus,
   getAllBooking,
   getAllReservationRequest,
@@ -34,7 +34,7 @@ router.use(adminOnly);
 
 router.get("/rooms", getRooms);
 router.post("/rooms/add-room", AddRoom);
-router.put("/rooms/:roomId/change-status", ChangeRoomStatus);
+router.put("/rooms/:roomId/edit", editRoom);
 
 router.get("/users", getUser);
 

@@ -72,16 +72,14 @@ export const AddRoom = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({ message: "Room created", ...newRoom });
 });
 
-export const ChangeRoomStatus = asyncHandler(
-  async (req: Request, res: Response) => {
-    const roomId = req.params.roomId;
-    const { status } = req.body;
+export const editRoom = asyncHandler(async (req: Request, res: Response) => {
+  const roomId = req.params.roomId;
+  const { data } = req.body;
 
-    const room = await findRoomAndUpdate(roomId, { isAvailable: status });
+  const room = await findRoomAndUpdate(roomId, data);
 
-    res.status(200).json({ room });
-  }
-);
+  res.status(200).json({ room });
+});
 
 export const getAllBooking = asyncHandler(
   async (req: Request, res: Response) => {
@@ -98,6 +96,61 @@ export const getAllReservationRequest = asyncHandler(
   }
 );
 
+// export const changeReservationStatus = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const { reservationId, status } = req.body;
+
+//     const reservation = await findReservation(reservationId);
+//     if (!reservation) {
+//       return res.status(404).json({ message: "Reservation not found" });
+//     }
+
+//     const roomId = reservation.room?.roomId;
+//     const start = reservation.startDate;
+//     const end = reservation.endDate;
+
+//     if (status === "approved") {
+//       const conflict = await ReservationModel.findOne({
+//         "room.roomId": roomId,
+//         status: "approved",
+//         _id: { $ne: reservationId },
+//         startDate: { $lt: end },
+//         endDate: { $gt: start },
+//       });
+
+//       if (conflict) {
+//         return res.status(400).json({
+//           message: "Room already booked for these dates!",
+//           conflict: {
+//             reservationId: conflict._id,
+//             bookedFrom: conflict.startDate,
+//             bookedTo: conflict.endDate,
+//           },
+//           overlapMessage: `This overlaps with an existing reservation from ${new Date(
+//             conflict.startDate
+//           ).toLocaleDateString()} to ${new Date(
+//             conflict.endDate
+//           ).toLocaleDateString()}.`,
+//         });
+//       }
+//     }
+
+//     const updated = await updateReservation(reservationId, { status });
+//     const emailHtml = await sendReservationEmail(reservation, status);
+
+//     sendEmail(
+//       reservation.user?.email as string,
+//       `Reservation ${status}`,
+//       emailHtml
+//     ).catch((err) => console.error("Email error:", err));
+
+//     return res.status(200).json({
+//       message: "Reservation status updated",
+//       reservation: updated,
+//     });
+//   }
+// );
+
 export const changeReservationStatus = asyncHandler(
   async (req: Request, res: Response) => {
     const { reservationId, status } = req.body;
@@ -107,36 +160,76 @@ export const changeReservationStatus = asyncHandler(
       return res.status(404).json({ message: "Reservation not found" });
     }
 
-    const roomId = reservation.room?.roomId;
+    if (
+      reservation.paid === true ||
+      status === "rejected" ||
+      status === "cancelled"
+    ) {
+      return res
+        .status(400)
+        .json({
+          message: "Reservation cannot be updated the user has already paid",
+        });
+    }
+
     const start = reservation.startDate;
     const end = reservation.endDate;
+    // 🟢 CRITICAL: Access the array of rooms
+    const roomsToBook = reservation.rooms;
 
     if (status === "approved") {
-      const conflict = await ReservationModel.findOne({
-        "room.roomId": roomId,
-        status: "approved",
-        _id: { $ne: reservationId },
-        startDate: { $lt: end },
-        endDate: { $gt: start },
-      });
+      if (!roomsToBook || roomsToBook.length === 0) {
+        return res
+          .status(400)
+          .json({ message: "Reservation has no rooms specified." });
+      }
 
-      if (conflict) {
-        return res.status(400).json({
-          message: "Room already booked for these dates!",
-          conflict: {
-            reservationId: conflict._id,
-            bookedFrom: conflict.startDate,
-            bookedTo: conflict.endDate,
-          },
-          overlapMessage: `This overlaps with an existing reservation from ${new Date(
-            conflict.startDate
-          ).toLocaleDateString()} to ${new Date(
-            conflict.endDate
-          ).toLocaleDateString()}.`,
+      // 🟢 Iterate over all requested rooms and check for conflicts individually
+      for (const roomItem of roomsToBook) {
+        const roomId = roomItem.roomId;
+        const quantity = roomItem.quantity || 1;
+
+        // Check for conflicts for this specific room ID
+        const conflicts = await ReservationModel.find({
+          "rooms.roomId": roomId, // Check against reservations that include this room ID
+          status: "approved",
+          _id: { $ne: reservationId },
+          startDate: { $lt: end },
+          endDate: { $gt: start },
         });
+
+        // Since MongoDB and Mongoose handle array conflicts differently
+        // (i.e., we can't easily check reserved quantity vs total quantity in one query),
+        // we'll check the total quantity of this specific room booked across all conflicting reservations.
+
+        let totalQuantityBooked = 0;
+        let conflictReservation: any = null;
+
+        for (const conflict of conflicts) {
+          const conflictingRoom = conflict.rooms.find(
+            (r: any) => r.roomId === roomId
+          );
+          if (conflictingRoom) {
+            totalQuantityBooked += conflictingRoom.quantity || 1;
+            conflictReservation = conflict; // Store one conflict for the error message
+          }
+        }
+
+        if (conflicts.length > 0) {
+          return res.status(400).json({
+            message: `Room type (ID: ${roomId}) is already partially or fully booked for these dates!`,
+            overlapMessage: `This room type conflicts with an existing reservation.`,
+            conflict: {
+              reservationId: conflictReservation?._id,
+              bookedFrom: conflictReservation?.startDate,
+              bookedTo: conflictReservation?.endDate,
+            },
+          });
+        }
       }
     }
 
+    // Proceed to update status only if no conflicts were found for any room
     const updated = await updateReservation(reservationId, { status });
     const emailHtml = await sendReservationEmail(reservation, status);
 

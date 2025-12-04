@@ -105,7 +105,7 @@ const PaymentPage = () => {
     );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-stone-100 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 to-stone-100 p-6">
       <div className="w-full max-w-xl backdrop-blur-lg bg-white/80 rounded-2xl shadow-xl border border-white/50 p-8 space-y-6">
         {/* Header */}
         <div className="text-center">
