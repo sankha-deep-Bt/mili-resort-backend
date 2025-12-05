@@ -7,6 +7,7 @@ import {
   getReservedRoom,
 } from "../services/user.service";
 import {
+  deleteCancelledReservationByID,
   deleteCancelledReservations,
   fetchRooms,
   updateReservation,
@@ -245,6 +246,11 @@ export const getEnquiries = asyncHandler(
 
 export const deleteReservations = asyncHandler(
   async (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (id !== undefined) {
+      const reservation = await deleteCancelledReservationByID(id);
+      return res.status(200).json({ message: "Reservation deleted" });
+    }
     const reservations = await deleteCancelledReservations();
     return res.status(200).json({ message: "All reservations deleted" });
   }

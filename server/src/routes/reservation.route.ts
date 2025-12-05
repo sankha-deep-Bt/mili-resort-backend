@@ -7,10 +7,10 @@ import {
   getRooms,
   addEnquiry,
   getEnquiries,
+  deleteReservations,
 } from "../controllers/reservation.controller";
 import { authenticate, userAllowed } from "../middleware/auth.middleware";
-import { deleteCancelledReservations } from "../services/admin.service";
-import { updateReservation } from "../services/user.service";
+// import { updateReservation } from "../services/user.service";
 
 const router = Router();
 
@@ -25,7 +25,8 @@ router.use(userAllowed);
 router.get("/", getMyReservation);
 router.post("/add", addReservation);
 router.post("/cancel", cancelReservation);
-router.put("/update", updateReservation);
-router.delete("/delete-cancel", deleteCancelledReservations);
+// router.put("/update", updateReservation);
+router.delete("/delete-cancel", deleteReservations);
+router.delete("/delete-cancel/:id", deleteReservations);
 
 export default router;

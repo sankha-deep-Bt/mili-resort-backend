@@ -96,61 +96,6 @@ export const getAllReservationRequest = asyncHandler(
   }
 );
 
-// export const changeReservationStatus = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     const { reservationId, status } = req.body;
-
-//     const reservation = await findReservation(reservationId);
-//     if (!reservation) {
-//       return res.status(404).json({ message: "Reservation not found" });
-//     }
-
-//     const roomId = reservation.room?.roomId;
-//     const start = reservation.startDate;
-//     const end = reservation.endDate;
-
-//     if (status === "approved") {
-//       const conflict = await ReservationModel.findOne({
-//         "room.roomId": roomId,
-//         status: "approved",
-//         _id: { $ne: reservationId },
-//         startDate: { $lt: end },
-//         endDate: { $gt: start },
-//       });
-
-//       if (conflict) {
-//         return res.status(400).json({
-//           message: "Room already booked for these dates!",
-//           conflict: {
-//             reservationId: conflict._id,
-//             bookedFrom: conflict.startDate,
-//             bookedTo: conflict.endDate,
-//           },
-//           overlapMessage: `This overlaps with an existing reservation from ${new Date(
-//             conflict.startDate
-//           ).toLocaleDateString()} to ${new Date(
-//             conflict.endDate
-//           ).toLocaleDateString()}.`,
-//         });
-//       }
-//     }
-
-//     const updated = await updateReservation(reservationId, { status });
-//     const emailHtml = await sendReservationEmail(reservation, status);
-
-//     sendEmail(
-//       reservation.user?.email as string,
-//       `Reservation ${status}`,
-//       emailHtml
-//     ).catch((err) => console.error("Email error:", err));
-
-//     return res.status(200).json({
-//       message: "Reservation status updated",
-//       reservation: updated,
-//     });
-//   }
-// );
-
 export const changeReservationStatus = asyncHandler(
   async (req: Request, res: Response) => {
     const { reservationId, status } = req.body;
@@ -160,16 +105,10 @@ export const changeReservationStatus = asyncHandler(
       return res.status(404).json({ message: "Reservation not found" });
     }
 
-    if (
-      reservation.paid === true ||
-      status === "rejected" ||
-      status === "cancelled"
-    ) {
-      return res
-        .status(400)
-        .json({
-          message: "Reservation cannot be updated the user has already paid",
-        });
+    if (reservation.paid === true && status === "rejected") {
+      return res.status(400).json({
+        message: "Reservation cannot be updated the user has already paid",
+      });
     }
 
     const start = reservation.startDate;
@@ -215,17 +154,17 @@ export const changeReservationStatus = asyncHandler(
           }
         }
 
-        if (conflicts.length > 0) {
-          return res.status(400).json({
-            message: `Room type (ID: ${roomId}) is already partially or fully booked for these dates!`,
-            overlapMessage: `This room type conflicts with an existing reservation.`,
-            conflict: {
-              reservationId: conflictReservation?._id,
-              bookedFrom: conflictReservation?.startDate,
-              bookedTo: conflictReservation?.endDate,
-            },
-          });
-        }
+        // if (conflicts.length > 0) {
+        //   return res.status(400).json({
+        //     message: `Room type (ID: ${roomId}) is already partially or fully booked for these dates!`,
+        //     overlapMessage: `This room type conflicts with an existing reservation.`,
+        //     conflict: {
+        //       reservationId: conflictReservation?._id,
+        //       bookedFrom: conflictReservation?.startDate,
+        //       bookedTo: conflictReservation?.endDate,
+        //     },
+        //   });
+        // }
       }
     }
 

@@ -5,6 +5,7 @@ import { RoomModel } from "../models/room.model";
 import { AppError } from "../utils/AppError";
 import { findUserById } from "./user.service";
 import mongoose from "mongoose";
+import { stat } from "fs";
 
 export const findAdmin = async (email: string) => {
   const admin = await AdminModel.findOne({ email });
@@ -66,9 +67,23 @@ export const changeRoomStatus = async (roomId: string, data: any) => {
   return room;
 };
 
+// export const deleteCancelledReservations = async () => {
+//   const reservations = await ReservationModel.deleteMany({
+//     status: "cancelled",
+//   });
+//   return reservations;
+// };
+
 export const deleteCancelledReservations = async () => {
   const reservations = await ReservationModel.deleteMany({
-    status: "cancelled",
+    status: { $in: ["cancelled", "rejected", "checked-in"] },
   });
   return reservations;
+};
+
+export const deleteCancelledReservationByID = async (reservationId: string) => {
+  return await ReservationModel.findOneAndDelete({
+    _id: reservationId,
+    status: { $in: ["cancelled", "rejected", "checked-in"] },
+  });
 };

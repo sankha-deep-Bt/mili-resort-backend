@@ -127,18 +127,19 @@ export default function AdminDashboard() {
     ).length;
 
     // Quick helper for revenue calculation
-    const calcNights = (start?: string, end?: string) => {
-      if (!start || !end) return 0;
-      const diff = Math.ceil(
-        (new Date(end).getTime() - new Date(start).getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-      return diff > 0 ? diff : 0;
-    };
+    // const calcNights = (start?: string, end?: string) => {
+    //   if (!start || !end) return 0;
+    //   const diff = Math.ceil(
+    //     (new Date(end).getTime() - new Date(start).getTime()) /
+    //       (1000 * 60 * 60 * 24)
+    //   );
+    //   return diff > 0 ? diff : 0;
+    // };
 
     const revenue = (bookings || []).reduce((acc: number, b: any) => {
       if (b.status === "approved" || b.status === "confirmed") {
-        return acc + calcNights(b.startDate, b.endDate) * (b.room?.price || 0);
+        // return acc + calcNights(b.startDate, b.endDate) * (b.room?.price || 0);
+        return acc + b.amount;
       }
       return acc;
     }, 0);
@@ -151,45 +152,6 @@ export default function AdminDashboard() {
     await logout();
     navigate("/");
   };
-
-  // const handleAcceptBooking = async (id: string, roomId: string) => {
-  //   setIsProcessing((p) => ({ ...p, [id]: true }));
-  //   try {
-  //     await axios.put(
-  //       "http://localhost:3000/api/v1/admin/reservation/change-status",
-  //       { reservationId: id, roomId, status: "approved" }
-  //     );
-  //     updateBookingStatus?.(id, "approved");
-  //     await fetchBookings?.();
-  //   } catch (err: any) {
-  //     alert(err?.response?.data?.message || "Accept failed");
-  //   } finally {
-  //     setIsProcessing((p) => ({ ...p, [id]: false }));
-  //   }
-  // };
-
-  // const handleRejectBooking = async (
-  //   roomId: string,
-  //   userId: string,
-  //   id: string,
-  //   targetStatus: "cancelled" | "rejected" = "cancelled"
-  // ) => {
-  //   setIsProcessing((p) => ({ ...p, [id]: true }));
-  //   try {
-  //     await axios.put(
-  //       "http://localhost:3000/api/v1/admin/reservation/change-status",
-  //       { reservationId: id, roomId, userId, status: targetStatus }
-  //     );
-  //     updateBookingStatus?.(id, targetStatus);
-  //     await fetchBookings?.();
-  //   } catch (err: any) {
-  //     alert(err?.response?.data?.message || "Reject failed");
-  //   } finally {
-  //     setIsProcessing((p) => ({ ...p, [id]: false }));
-  //   }
-  // };
-
-  // --- In your parent component (e.g., DashboardAdmin) ---
 
   // Removed 'roomId' from arguments, only passing 'id'
   const handleAcceptBooking = async (id: string) => {
@@ -223,21 +185,48 @@ export default function AdminDashboard() {
       );
       updateBookingStatus?.(id, targetStatus);
       await fetchBookings?.();
+      alert("Booking rejected successfully.");
     } catch (err: any) {
       alert(err?.response?.data?.message || "Reject failed");
     } finally {
       setIsProcessing((p) => ({ ...p, [id]: false }));
     }
   };
-  const handleDeleteBooking = async () => {
+  const handleDeleteBooking = async (ids: string[]) => {
     try {
-      await axios.delete(
-        "http://localhost:3000/api/v1/reservation/delete-cancel"
-      );
+      if (ids.length === 1) {
+        // delete just one booking
+        await axios.delete(
+          `http://localhost:3000/api/v1/reservation/delete-cancel/${ids[0]}`
+        );
+      } else {
+        // bulk delete
+        await axios.delete(
+          "http://localhost:3000/api/v1/reservation/delete-cancel"
+        );
+      }
+
       await fetchBookings?.();
-      alert("Successfully deleted cancelled bookings");
+      alert("Successfully deleted bookings");
     } catch (error) {
       alert("Failed to delete bookings");
+    }
+  };
+
+  const handleCheckIn = async (id: string, targetStatus: "checked-in") => {
+    try {
+      // 🟢 Send only the reservation ID and the desired status
+      await axios.put(
+        "http://localhost:3000/api/v1/admin/reservation/change-status",
+        { reservationId: id, status: targetStatus }
+      );
+      updateBookingStatus?.(id, targetStatus);
+      await fetchBookings?.();
+      alert("Check-in successfully.");
+    } catch (err: any) {
+      alert(err?.response?.data?.message || "Check-in failed");
+    } finally {
+      setIsProcessing((p) => ({ ...p, [id]: false }));
     }
   };
 
@@ -333,6 +322,7 @@ export default function AdminDashboard() {
             onAccept={handleAcceptBooking}
             onReject={handleRejectBooking}
             onDelete={handleDeleteBooking}
+            onCheckin={handleCheckIn}
           />
         )}
 

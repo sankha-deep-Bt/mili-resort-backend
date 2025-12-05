@@ -25,15 +25,24 @@ export default function BookingsTab({
   onAccept,
   onReject,
   onDelete,
+  onCheckin,
 }: any) {
   const ITEMS_PER_PAGE = 5;
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
 
-  const cancelledBookingIds = useMemo(() => {
-    return bookings
-      .filter((booking: any) => booking.status === "cancelled")
-      .map((booking: any) => booking._id);
-  }, [bookings]);
+  // const cancelledBookingIds = useMemo(() => {
+  //   return bookings
+  //     .filter((booking: any) => booking.status === "cancelled")
+  //     .map((booking: any) => booking._id);
+  // }, [bookings]);
+
+  // const cancelledBookingIds = useMemo(() => {
+  //   return bookings
+  //     .filter((b: any) => ["cancelled", "rejected"].includes(b.status))
+  //     .map((b: any) => b._id);
+  // }, [bookings]);
 
   const handleDeleteCancelled = () => {
     if (onDelete && cancelledBookingIds.length > 0) {
@@ -41,10 +50,35 @@ export default function BookingsTab({
     }
   };
 
+  const filteredBookings = useMemo(() => {
+    return bookings.filter((b: any) => {
+      const statusMatch =
+        statusFilter === "all" ? true : b.status === statusFilter;
+
+      const paymentMatch =
+        paymentFilter === "all"
+          ? true
+          : paymentFilter === "paid"
+          ? b.paid === true
+          : b.paid === false;
+
+      return statusMatch && paymentMatch;
+    });
+  }, [bookings, statusFilter, paymentFilter]);
+  const cancelledBookingIds = useMemo(() => {
+    return filteredBookings
+      .filter((b: any) => ["cancelled", "rejected"].includes(b.status))
+      .map((b: any) => b._id);
+  }, [filteredBookings]);
+
+  // const paginatedBookings = useMemo(() => {
+  //   const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  //   return bookings.slice(start, start + ITEMS_PER_PAGE);
+  // }, [bookings, currentPage]);
   const paginatedBookings = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return bookings.slice(start, start + ITEMS_PER_PAGE);
-  }, [bookings, currentPage]);
+    return filteredBookings.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredBookings, currentPage]);
 
   const calcNights = (start?: string, end?: string) => {
     if (!start || !end) return 0;
@@ -128,14 +162,61 @@ export default function BookingsTab({
       )}
       {/* APPROVED/CONFIRMED CANCELLATION */}
       {booking.status === "approved" && (
+        <>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-red-600 text-red-600 hover:bg-red-50 flex-1 md:flex-none"
+            onClick={() => onReject(booking._id, "cancelled")}
+            disabled={!!isProcessing[booking._id]}
+          >
+            {isProcessing[booking._id] ? "..." : "Cancel"}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-blue-600 text-blue-600 hover:bg-red-50 flex-1 md:flex-none"
+            onClick={() => onCheckin(booking._id, "checked-in")}
+            disabled={!!isProcessing[booking._id]}
+          >
+            {isProcessing[booking._id] ? "..." : "Check-in"}
+          </Button>
+        </>
+      )}
+      {booking.status === "checked-in" && (
         <Button
-          size="sm"
-          variant="outline"
-          className="border-red-600 text-red-600 hover:bg-red-50 flex-1 md:flex-none"
-          onClick={() => onReject(booking._id, "cancelled")}
+          size="icon"
+          variant="ghost"
+          className="text-red-600 hover:text-red-800"
+          onClick={() => onDelete([booking._id])} // delete only this one
           disabled={!!isProcessing[booking._id]}
+          title="Delete reservation"
         >
-          {isProcessing[booking._id] ? "..." : "Cancel Booking"}
+          <Trash2 className="w-6 h-6" />
+        </Button>
+      )}
+      {booking.status === "rejected" && (
+        <Button
+          size="icon"
+          variant="ghost"
+          className="text-red-600 hover:text-red-800"
+          onClick={() => onDelete([booking._id])} // delete only this one
+          disabled={!!isProcessing[booking._id]}
+          title="Delete reservation"
+        >
+          <Trash2 className="w-6 h-6" />
+        </Button>
+      )}
+      {booking.status === "cancelled" && (
+        <Button
+          size="icon"
+          variant="ghost"
+          className="text-red-600 hover:text-red-800"
+          onClick={() => onDelete([booking._id])} // delete only this one
+          disabled={!!isProcessing[booking._id]}
+          title="Delete reservation"
+        >
+          <Trash2 className="w-6 h-6" />
         </Button>
       )}
     </div>
@@ -158,7 +239,7 @@ export default function BookingsTab({
           className="text-red-600 hover:text-red-900 cursor-pointer"
           title={
             cancelledBookingIds.length > 0
-              ? `Delete ${cancelledBookingIds.length} cancelled bookings`
+              ? `Delete ${cancelledBookingIds.length} cancelled/rejected bookings`
               : "No cancelled bookings to delete"
           }
         >
@@ -167,6 +248,39 @@ export default function BookingsTab({
       </CardHeader>
 
       <CardContent>
+        <div className="flex flex-wrap gap-3 px-6 pb-4">
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setStatusFilter(e.target.value);
+            }}
+            className="border rounded-md px-3 py-2 text-sm"
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="checked-in">Checked-in</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="rejected">Rejected</option>
+          </select>
+
+          {/* Payment Filter */}
+          <select
+            value={paymentFilter}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setPaymentFilter(e.target.value);
+            }}
+            className="border rounded-md px-3 py-2 text-sm"
+          >
+            <option value="all">All Payments</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+        </div>
+
         {loading ? (
           <div className="py-12 text-center text-stone-400">Loading…</div>
         ) : bookings.length === 0 ? (
