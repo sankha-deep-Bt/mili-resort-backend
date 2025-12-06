@@ -5,6 +5,7 @@ import {
   Users,
   Calendar,
   X,
+  Percent,
 } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -63,6 +64,11 @@ export default function AdminSidebar({
               <NavItem id="rooms" label="Rooms" Icon={BedDouble} />
               <NavItem id="guests" label="Guests" Icon={Users} />
               <NavItem id="events" label="Events" Icon={Calendar} />
+              <NavItem
+                id="latest-offers"
+                label="Latest Offers"
+                Icon={Percent}
+              />
             </nav>
           </div>
 

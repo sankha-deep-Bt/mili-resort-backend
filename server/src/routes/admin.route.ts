@@ -7,6 +7,9 @@ import {
   getAllBooking,
   getAllReservationRequest,
   getUser,
+  getAllOffers,
+  deleteOffer,
+  addOffer,
 } from "../controllers/admin.controller";
 import {
   addEvent,
@@ -43,5 +46,11 @@ router.get("/reservations", getAllReservationRequest);
 // router.post("/reservation/add/:userId", addReservation);
 // router.put("/reservation/cancel", cancelReservation);
 router.put("/reservation/change-status", changeReservationStatus);
+
+router.get("/latest-offers", getAllOffers);
+// router.get("/latest-offers/:eventId", getEvent);
+router.post("/latest-offers/add", addOffer);
+// router.put("/latest-offers/update", updateOffer);
+router.delete("/latest-offers/:Id", deleteOffer);
 
 export default router;

@@ -87,3 +87,9 @@ export const deleteCancelledReservationByID = async (reservationId: string) => {
     status: { $in: ["cancelled", "rejected", "checked-in"] },
   });
 };
+
+//TODO:complete
+export const fetchAllOffers = async () => {
+  const offers = await RoomModel.find({ offer: true });
+  return offers;
+};

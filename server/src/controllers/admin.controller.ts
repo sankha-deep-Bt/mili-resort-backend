@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
   createNewRoom,
+  fetchAllOffers,
   fetchReservationRequest,
   fetchReservations,
   fetchRooms,
@@ -27,6 +28,11 @@ import {
   fetchShowcaseImages,
   findGalleryImage,
 } from "../models/gallery.model";
+import {
+  createNewOffer,
+  deleteOfferById,
+  findOfferById,
+} from "../models/offer.model";
 
 export const adminLogin = asyncHandler(
   async (req: Request<{}, {}, AdminLoginInput>, res: Response) => {
@@ -226,3 +232,26 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
 //     res.status(200).json({ images });
 //   }
 // );
+
+export const getAllOffers = asyncHandler(
+  async (req: Request, res: Response) => {
+    const offers = await fetchAllOffers();
+    res.status(200).json({ message: "All offers", data: offers });
+  }
+);
+
+export const addOffer = asyncHandler(async (req: Request, res: Response) => {
+  const { offer } = req.body;
+  const newOffer = await createNewOffer(offer);
+  res.status(200).json({ message: "Offer added", newOffer });
+});
+
+export const deleteOffer = asyncHandler(async (req: Request, res: Response) => {
+  const offerId = req.params.offerId;
+  const offer = await findOfferById(offerId);
+  if (!offer) {
+    return res.status(404).json({ message: "Offer not found" });
+  }
+  await deleteOfferById(offerId);
+  return res.status(200).json({ message: "Offer deleted" });
+});
