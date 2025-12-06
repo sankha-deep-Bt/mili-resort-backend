@@ -8,6 +8,7 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function EventsTab({ events, onUpdateStatus }: any) {
   const [subTab, setSubTab] = useState<"add" | "enquiries">("enquiries");
@@ -33,10 +34,10 @@ export default function EventsTab({ events, onUpdateStatus }: any) {
         "http://localhost:3000/api/v1/admin/event/add",
         newEvent
       );
-      alert("Event created successfully!");
+      toast.success("Event created successfully!");
       setNewEvent({ title: "", subtitle: "", description: "", image: "" });
     } catch (err) {
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 

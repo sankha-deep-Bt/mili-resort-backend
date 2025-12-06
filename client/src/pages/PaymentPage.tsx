@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const PaymentPage = () => {
   const [loading, setLoading] = useState(true);
@@ -41,14 +42,14 @@ const PaymentPage = () => {
       setOrder(res.data.order);
       setLoading(false);
     } catch (err) {
-      alert("Failed to load payment. Try again.");
+      toast.error("Failed to load payment. Try again.");
       setLoading(false);
     }
   };
 
   useEffect(() => {
     if (!reservationId) {
-      alert("Missing reservation details");
+      toast.error("Missing reservation details");
       return;
     }
     createOrder();
@@ -57,7 +58,7 @@ const PaymentPage = () => {
   const handlePayment = async () => {
     const loaded = await loadRazorpay();
     if (!loaded) {
-      alert("Razorpay SDK failed to load");
+      toast.error("Razorpay SDK failed to load");
       return;
     }
 
@@ -81,13 +82,13 @@ const PaymentPage = () => {
           );
 
           if (verifyRes.data.success) {
-            alert("Payment successful!");
+            toast.success("Payment successful!");
             window.location.href = "/success";
           } else {
-            alert("Payment verification failed");
+            toast.error("Payment verification failed");
           }
         } catch (err) {
-          alert("Error verifying payment");
+          toast.error("Error verifying payment");
         }
       },
       theme: { color: "#6D28D9" },

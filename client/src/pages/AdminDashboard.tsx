@@ -14,6 +14,7 @@ import BookingsTab from "../components/admin/BookingsTab";
 import RoomsTab from "../components/admin/RoomsTab";
 import GuestsTab from "../components/admin/GuestsTab";
 import EventsTab from "../components/admin/EventsTab";
+import toast from "react-hot-toast";
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
@@ -165,7 +166,7 @@ export default function AdminDashboard() {
       updateBookingStatus?.(id, "approved");
       await fetchBookings?.();
     } catch (err: any) {
-      alert(err?.response?.data?.message || "Accept failed");
+      toast.error("Accept failed");
     } finally {
       setIsProcessing((p) => ({ ...p, [id]: false }));
     }
@@ -185,9 +186,10 @@ export default function AdminDashboard() {
       );
       updateBookingStatus?.(id, targetStatus);
       await fetchBookings?.();
-      alert("Booking rejected successfully.");
+      toast.success("Booking rejected successfully.");
     } catch (err: any) {
-      alert(err?.response?.data?.message || "Reject failed");
+      console.error(err);
+      toast.error("Reject failed");
     } finally {
       setIsProcessing((p) => ({ ...p, [id]: false }));
     }
@@ -207,9 +209,9 @@ export default function AdminDashboard() {
       }
 
       await fetchBookings?.();
-      alert("Successfully deleted bookings");
+      toast.success("Successfully deleted bookings");
     } catch (error) {
-      alert("Failed to delete bookings");
+      toast.error("Failed to delete bookings");
     }
   };
 
@@ -222,9 +224,10 @@ export default function AdminDashboard() {
       );
       updateBookingStatus?.(id, targetStatus);
       await fetchBookings?.();
-      alert("Check-in successfully.");
+      toast.success("Check-in successfully.");
     } catch (err: any) {
-      alert(err?.response?.data?.message || "Check-in failed");
+      console.error(err);
+      toast.error("Check-in failed");
     } finally {
       setIsProcessing((p) => ({ ...p, [id]: false }));
     }
@@ -236,10 +239,10 @@ export default function AdminDashboard() {
         `http://localhost:3000/api/v1/reservation/event-enquiry/${eventId}`,
         { status }
       );
-      alert(`Event marked as ${status}`);
+      toast.success(`Event marked as ${status}`);
       fetchEventRequests();
     } catch (error) {
-      alert("Failed to update event status");
+      toast.error("Failed to update event status");
     }
   };
 
@@ -250,7 +253,7 @@ export default function AdminDashboard() {
       });
       updateRoomStatus?.(roomId, data);
     } catch (error) {
-      alert("Failed to toggle room availability");
+      toast.error("Failed to toggle room availability");
     }
   };
 

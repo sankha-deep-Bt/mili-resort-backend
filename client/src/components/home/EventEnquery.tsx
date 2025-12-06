@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { type FormEvent } from "react";
 
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import {
   Calendar,
   Users,
@@ -78,11 +78,11 @@ export default function EventEnquiry() {
         }
       );
       console.log(res.data);
-      alert("Enquiry sent successfully! We'll contact you soon.");
+      toast.success("Enquiry sent successfully! We'll contact you soon.");
       form.reset();
     } catch (error) {
       console.error(error);
-      alert("Failed to send enquiry. Please try again.");
+      toast.error("Failed to send enquiry. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

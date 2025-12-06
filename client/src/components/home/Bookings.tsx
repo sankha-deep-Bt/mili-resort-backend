@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import axios from "axios";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { CheckCircle2, X } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
@@ -93,13 +93,13 @@ export default function Booking() {
 
       await axios.post(`${API_BASE}/reservation/add`, bookingSummary);
 
-      alert("Booking request submitted!");
+      toast.success("Booking request submitted!");
       setConfirmation(bookingSummary);
       setSuccessMessage(`Thank you, ${name}! We will reach out shortly.`);
       form.reset();
     } catch (error: any) {
       console.error(error);
-      alert(error?.response?.data?.message || "Booking failed!");
+      toast.error("Something went wrong. Booking failed!");
     } finally {
       setIsSubmitting(false);
     }
@@ -116,7 +116,7 @@ export default function Booking() {
 
       {/* Form Section */}
       <div className="absolute bottom-0 left-0 right-0 bg-gray-900/80 py-12">
-        <div className="container mx-auto px-4 md:px-12 max-w-[68.75rem]">
+        <div className="container mx-auto px-4 md:px-12 max-w-275">
           <div className="text-center mb-10">
             <h2 className="text-2xl text-white font-light uppercase tracking-widest">
               Your Mukutmanipur Escape Awaits
@@ -277,7 +277,7 @@ export default function Booking() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative w-full max-w-md rounded-[2rem] border border-white/20 bg-gradient-to-br from-gray-900 via-gray-900/90 to-gray-800 px-8 py-10 text-white"
+            className="relative w-full max-w-md rounded-4xl border border-white/20 bg-linear-to-br from-gray-900 via-gray-900/90 to-gray-800 px-8 py-10 text-white"
           >
             <button
               className="absolute right-4 top-4 text-white/60 hover:text-white"

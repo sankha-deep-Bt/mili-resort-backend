@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import axios from "axios";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
+import toast from "react-hot-toast";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function AdminLogin() {
       navigate("/admin/dashboard");
     } catch (err) {
       console.error(err);
-      alert("Invalid credentials");
+      toast.error("Invalid credentials");
     }
   };
 

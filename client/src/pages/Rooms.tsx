@@ -1,10 +1,13 @@
 import Navbar from "../components/home/Navbar";
 import Footer from "../components/home/Footer";
 import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
+// import { Badge } from "../components/ui/badge";
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const heroBackdrop =
   "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80";
@@ -27,29 +30,60 @@ const highlightTiles = [
 ] as const;
 
 // Static placeholder rooms
-const rooms = [
-  {
-    _id: "1",
-    name: "Ground Floor Deluxe Room",
-    type: "Deluxe",
-    price: 2500,
-    description: "Spacious deluxe room with all amenities.",
-    status: "available",
-    image: fallbackRoomImage,
-  },
-  {
-    _id: "2",
-    name: "First Floor Super Deluxe Room",
-    type: "Super Deluxe",
-    price: 3000,
-    description: "Premium room with balcony and view.",
-    status: "booked",
-    image: fallbackRoomImage,
-  },
-];
+// const rooms = [
+//   {
+//     _id: "6932aeb5559e705a7aad6bba",
+//     name: "Ground floor Excutive cottage Double bed room",
+//     occupancyDetails: "( 2-adult & 1 kids under 5 year)",
+//     Roomtype: "Garden Deluxe Suite",
+//     description:
+//       "Ground-level comfort with direct garden access. Includes breakfast.",
+
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/6546e674-a31b-4cd0-920c-ca8d3300081b",
+
+//     price: 4500,
+//     priceDetails: "4500/- including breakfast ( 2-adult & 1 kids under 5 year)",
+//   },
+//   {
+//     _id: "1",
+//     name: "Ground Floor Deluxe Room",
+//     type: "Deluxe",
+//     price: 2500,
+//     description: "Spacious deluxe room with all amenities.",
+//     status: "available",
+//     image: fallbackRoomImage,
+//   },
+//   {
+//     _id: "2",
+//     name: "First Floor Super Deluxe Room",
+//     type: "Super Deluxe",
+//     price: 3000,
+//     description: "Premium room with balcony and view.",
+//     status: "booked",
+//     image: fallbackRoomImage,
+//   },
+// ];
 
 export default function Rooms() {
   const navigate = useNavigate();
+  const { isAuth } = useAuth();
+  const [rooms, setRooms] = useState<any[]>([]);
+
+  const fetchRooms = async () => {
+    try {
+      const roomsRes = await axios.get(
+        "http://localhost:3000/api/v1/reservation/rooms"
+      );
+      setRooms(Array.isArray(roomsRes.data.rooms) ? roomsRes.data.rooms : []);
+    } catch (err) {
+      console.error("Error fetching rooms:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   const currencyFormatter = useMemo(
     () =>
@@ -64,7 +98,10 @@ export default function Rooms() {
   const sortedRooms = [...rooms];
 
   const handleBookingRedirect = () => {
-    navigate("/#booking");
+    if (!isAuth) return toast.error("Please login to book a room");
+    else {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -76,7 +113,7 @@ export default function Rooms() {
           alt="Premium suites"
           className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-stone-950/90" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/60 to-stone-950/90" />
         <div className="relative container mx-auto px-6 lg:px-12 max-w-6xl text-white space-y-8">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -90,7 +127,8 @@ export default function Rooms() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight"
           >
-            Seven distinct sanctuaries curated for slow, mindful escapes.
+            {rooms.length} distinct sanctuaries curated for slow, mindful
+            escapes.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
@@ -176,14 +214,14 @@ export default function Rooms() {
                 />
                 <div className="p-8 flex flex-col gap-4 flex-1">
                   <div className="flex items-center justify-between">
-                    <Badge
+                    {/* <Badge
                       variant={
                         room.status === "available" ? "secondary" : "outline"
                       }
                       className="uppercase tracking-[0.3em]"
                     >
                       {room.status.split("_").join(" ")}
-                    </Badge>
+                    </Badge> */}
                     <span className="text-sm text-stone-500">
                       Sleeps 2-4 guests
                     </span>
@@ -210,7 +248,9 @@ export default function Rooms() {
                     </div>
                     <Button
                       variant="ghost"
-                      onClick={() => navigate("/dashboard")}
+                      onClick={() => {
+                        isAuth ? navigate("/dashboard") : navigate("/login");
+                      }}
                       className="uppercase tracking-[0.4em]"
                     >
                       Guest Portal

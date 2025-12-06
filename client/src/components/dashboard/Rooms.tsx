@@ -19,6 +19,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 // Helper function to calculate days
 const calculateDays = (start: Date, end: Date): number => {
@@ -125,17 +126,19 @@ const Rooms = ({ onBookingCompleted, Rooms }: RoomsProps) => {
   // Submit booking
   const handleBookingSubmit = async () => {
     if (selectedRooms.length === 0) {
-      alert("Please select at least one room.");
+      toast.error("Please select at least one room.");
       return;
     }
 
     if (!checkIn || !checkOut || !bookingDetails || bookingDetails.days <= 0) {
-      alert("Please complete valid booking dates.");
+      toast.error("Please complete valid booking dates.");
       return;
     }
 
     if (isOverCapacity) {
-      alert(`Total guests exceed combined capacity (${totalCapacity}).`);
+      toast.error(
+        `Total guests exceed combined capacity (${totalCapacity}) for one room.`
+      );
       return;
     }
 
@@ -175,10 +178,10 @@ const Rooms = ({ onBookingCompleted, Rooms }: RoomsProps) => {
       setNotes("");
 
       onBookingCompleted();
-      alert("Booking successful!");
+      toast.success("Booking successful!");
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.error || "Booking failed."); // Use 'error' field from backend response
+      toast.error("something went wrong. Booking failed."); // Use 'error' field from backend response
     }
   };
 
