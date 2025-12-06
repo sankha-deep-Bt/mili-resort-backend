@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 type OfferCard = {
   id: string;
@@ -113,10 +115,31 @@ function OfferCardItem({ data, index }: OfferCardProps) {
 export default function Latest({
   eyebrow = "Latest Offers",
   title = "Tailored escapes for every stay",
-  description = "Surprise upgrades, curated F&B pairings, and only-at-Mili experiences crafted weekly by the resort team.",
+  description = "Surprise upgrades, curated F&B pairings, and only at Mili experiences crafted weekly by the resort team.",
 }: LatestProps) {
-  // Always use fallback offers since no API is used
-  const cardsToRender: OfferCard[] = FALLBACK_OFFERS;
+  const [offers, setOffers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const fetchOffers = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(
+        "http://localhost:3000/api/v1/admin/latest-offers"
+      );
+      // ensure offers is always an array
+      setOffers(res.data?.data || []);
+    } catch (err) {
+      console.error("Failed to load offers", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
+  const cardsToRender: OfferCard[] =
+    offers.length > 0 ? offers : FALLBACK_OFFERS;
 
   return (
     <section id="latest-offers" className="py-24 bg-stone-50">

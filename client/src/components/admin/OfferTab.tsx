@@ -10,7 +10,6 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -23,12 +22,13 @@ export default function OfferTab() {
   const [loading, setLoading] = useState(false);
 
   // Form fields
+  // Form fields (UPDATED)
   const [title, setTitle] = useState("");
-  const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
-  const [discount, setDiscount] = useState<number | "">("");
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [priceLabel, setPriceLabel] = useState("");
+  const [ctaLabel, setCtaLabel] = useState("");
+  const [ctaHref, setCtaHref] = useState("");
 
   // Fetch offers
   const fetchOffers = async () => {
@@ -54,11 +54,11 @@ export default function OfferTab() {
   const handleCreateOffer = async () => {
     if (
       !title ||
-      !image ||
       !description ||
-      !discount ||
-      !startDate ||
-      !endDate
+      !imageUrl ||
+      !priceLabel ||
+      !ctaLabel ||
+      !ctaHref
     ) {
       toast.error("Please fill all fields");
       return;
@@ -67,22 +67,22 @@ export default function OfferTab() {
     try {
       await axios.post("http://localhost:3000/api/v1/admin/latest-offers/add", {
         title,
-        image,
         description,
-        discount,
-        startDate,
-        endDate,
+        imageUrl,
+        priceLabel,
+        ctaLabel,
+        ctaHref,
       });
 
       toast.success("Offer added!");
 
       // Reset fields
       setTitle("");
-      setImage("");
       setDescription("");
-      setDiscount("");
-      setStartDate(null);
-      setEndDate(null);
+      setImageUrl("");
+      setPriceLabel("");
+      setCtaLabel("");
+      setCtaHref("");
 
       fetchOffers();
       setActiveSubTab("list");
@@ -146,44 +146,35 @@ export default function OfferTab() {
               onChange={(e) => setTitle(e.target.value)}
             />
 
-            <Input
-              placeholder="Image URL"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-            />
-
             <Textarea
-              placeholder="Offer Description"
+              placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
 
             <Input
-              placeholder="Discount %"
-              type="number"
-              value={discount}
-              onChange={(e) => setDiscount(Number(e.target.value))}
+              placeholder="Image URL"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
             />
 
-            <div className="flex gap-4">
-              <div className="w-1/2">
-                <p className="text-sm mb-1">Start Date</p>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(d: any) => setStartDate(d)}
-                  className="w-full border rounded-md p-2"
-                />
-              </div>
+            <Input
+              placeholder="Price Label (e.g., 'Flat ₹999', 'Save 20%')"
+              value={priceLabel}
+              onChange={(e) => setPriceLabel(e.target.value)}
+            />
 
-              <div className="w-1/2">
-                <p className="text-sm mb-1">End Date</p>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(d: any) => setEndDate(d)}
-                  className="w-full border rounded-md p-2"
-                />
-              </div>
-            </div>
+            <Input
+              placeholder="CTA Label (e.g., 'Book Now', 'Learn More')"
+              value={ctaLabel}
+              onChange={(e) => setCtaLabel(e.target.value)}
+            />
+
+            <Input
+              placeholder="CTA Link (URL)"
+              value={ctaHref}
+              onChange={(e) => setCtaHref(e.target.value)}
+            />
 
             <Button className="w-full" onClick={handleCreateOffer}>
               Create Offer

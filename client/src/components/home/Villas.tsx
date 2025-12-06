@@ -1,53 +1,76 @@
 import { motion, useAnimationControls } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import axios from "axios";
 
-const villas = [
-  {
-    name: "Ground Floor Deluxe Room",
-    image:
-      "https://harmless-tapir-303.convex.cloud/api/storage/595b9948-f517-4407-bec4-488fe0266a5b",
-  },
-  {
-    name: "First Floor Super Deluxe Room",
-    image:
-      "https://harmless-tapir-303.convex.cloud/api/storage/89f4a0d1-4505-4bf7-9c06-f445bb2e93a4",
-  },
-  {
-    name: "Ground Floor Cottage Room Double bed",
-    image:
-      "https://harmless-tapir-303.convex.cloud/api/storage/6546e674-a31b-4cd0-920c-ca8d3300081b",
-  },
-  {
-    name: "Ground Floor Cottage Room 4 beded",
-    image:
-      "https://harmless-tapir-303.convex.cloud/api/storage/594daab9-4f31-4193-83e9-93b452d634ad",
-  },
-  {
-    name: "Ground Floor Standard Room",
-    image:
-      "https://harmless-tapir-303.convex.cloud/api/storage/9333e614-1155-4f90-be8b-1e2c47685e97",
-  },
-  {
-    name: "1st floor & 2nd floor Standard ac Double Bed Room",
-    image:
-      "https://harmless-tapir-303.convex.cloud/api/storage/19c1e9be-8454-4a15-981b-598bfe66a02c",
-  },
-  {
-    name: "1st floor & 2nd floor Standard ac 4 Beded Room",
-    image:
-      "https://harmless-tapir-303.convex.cloud/api/storage/4b39fa3d-f2b1-4cc1-90cc-b3e9720415f5",
-  },
-];
+// const villas = [
+//   {
+//     name: "Ground Floor Deluxe Room",
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/595b9948-f517-4407-bec4-488fe0266a5b",
+//   },
+//   {
+//     name: "First Floor Super Deluxe Room",
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/89f4a0d1-4505-4bf7-9c06-f445bb2e93a4",
+//   },
+//   {
+//     name: "Ground Floor Cottage Room Double bed",
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/6546e674-a31b-4cd0-920c-ca8d3300081b",
+//   },
+//   {
+//     name: "Ground Floor Cottage Room 4 beded",
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/594daab9-4f31-4193-83e9-93b452d634ad",
+//   },
+//   {
+//     name: "Ground Floor Standard Room",
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/9333e614-1155-4f90-be8b-1e2c47685e97",
+//   },
+//   {
+//     name: "1st floor & 2nd floor Standard ac Double Bed Room",
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/19c1e9be-8454-4a15-981b-598bfe66a02c",
+//   },
+//   {
+//     name: "1st floor & 2nd floor Standard ac 4 Beded Room",
+//     image:
+//       "https://harmless-tapir-303.convex.cloud/api/storage/4b39fa3d-f2b1-4cc1-90cc-b3e9720415f5",
+//   },
+// ];
 
 export default function Villas() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(4);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [rooms, setRooms] = useState<any[]>([]);
+
+  const fetchRooms = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:3000/api/v1/reservation/rooms",
+        {
+          withCredentials: true,
+        }
+      );
+
+      // IMPORTANT FIX
+      setRooms(Array.isArray(res.data.rooms) ? res.data.rooms : []);
+    } catch (err) {
+      console.error("Room fetch error:", err);
+      setRooms([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   // Duplicate items for infinite scroll effect
-  const extendedVillas = [...villas, ...villas];
+  const extendedRooms = [...rooms, ...rooms];
 
   useEffect(() => {
     const handleResize = () => {
@@ -66,7 +89,7 @@ export default function Villas() {
   }, []);
 
   const nextSlide = () => {
-    if (currentIndex >= villas.length) return;
+    if (currentIndex >= rooms.length) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => prev + 1);
   };
@@ -85,7 +108,7 @@ export default function Villas() {
   }, [currentIndex, itemsToShow]);
 
   const handleTransitionEnd = () => {
-    if (currentIndex >= villas.length) {
+    if (currentIndex >= rooms.length) {
       setIsTransitioning(false);
       setCurrentIndex(0);
       // Force reflow/re-enable transition in next tick
@@ -112,7 +135,7 @@ export default function Villas() {
               }}
               onAnimationComplete={handleTransitionEnd}
             >
-              {extendedVillas.map((villa, index) => (
+              {extendedRooms.map((room, index) => (
                 <div
                   key={index}
                   className="shrink-0 px-4"
@@ -121,13 +144,13 @@ export default function Villas() {
                   <div className="group relative h-[28rem] overflow-hidden cursor-pointer">
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                      style={{ backgroundImage: `url(${villa.image})` }}
+                      style={{ backgroundImage: `url(${room?.image})` }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
                     <div className="absolute inset-0 flex flex-col justify-end p-8">
                       <div className="border-t-2 border-white/60 pt-4">
                         <h3 className="text-white text-xs font-bold tracking-widest uppercase leading-relaxed">
-                          {villa.name}
+                          {room.name}
                         </h3>
                       </div>
                     </div>
@@ -153,10 +176,10 @@ export default function Villas() {
 
         <div className="text-center mt-16">
           <a
-            href="#"
+            href="/rooms"
             className="inline-block px-10 py-5 border-2 rounded-full border-zinc-700 text-zinc-700 text-xs font-bold tracking-widest uppercase hover:bg-zinc-700 hover:text-white transition-colors"
           >
-            Explore All Villas
+            Explore All Rooms
           </a>
         </div>
       </div>

@@ -2,11 +2,11 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IOffer extends Document {
   title: string;
-  image: string;
   description: string;
-  discount: number;
-  startDate: Date;
-  endDate: Date;
+  imageUrl: string;
+  priceLabel: string;
+  ctaLabel: string;
+  ctaHref: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,24 +17,25 @@ const offerSchema = new Schema<IOffer>(
       type: String,
       required: true,
     },
-    image: {
-      type: String,
-      required: true,
-    },
     description: {
       type: String,
       required: true,
     },
-    discount: {
-      type: Number,
+    imageUrl: {
+      type: String,
       required: true,
     },
-    startDate: {
-      type: Date,
+
+    priceLabel: {
+      type: String,
       required: true,
     },
-    endDate: {
-      type: Date,
+    ctaLabel: {
+      type: String,
+      required: true,
+    },
+    ctaHref: {
+      type: String,
       required: true,
     },
   },
