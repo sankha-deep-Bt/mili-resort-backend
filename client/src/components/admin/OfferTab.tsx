@@ -51,42 +51,75 @@ export default function OfferTab() {
   }, []);
 
   // Create offer
+  // const handleCreateOffer = async () => {
+  //   if (
+  //     !title ||
+  //     !description ||
+  //     !imageUrl ||
+  //     !priceLabel ||
+  //     !ctaLabel ||
+  //     !ctaHref
+  //   ) {
+  //     toast.error("Please fill all fields");
+  //     return;
+  //   }
+
+  //   try {
+  //     await axios.post("http://localhost:3000/api/v1/admin/latest-offers/add", {
+  //       title,
+  //       description,
+  //       imageUrl,
+  //       priceLabel,
+  //       ctaLabel,
+  //       ctaHref,
+  //     });
+
+  //     toast.success("Offer added!");
+
+  //     // Reset fields
+  //     setTitle("");
+  //     setDescription("");
+  //     setImageUrl("");
+  //     setPriceLabel("");
+  //     setCtaLabel("");
+  //     setCtaHref("");
+
+  //     fetchOffers();
+  //     setActiveSubTab("list");
+  //   } catch (err) {
+  //     toast.error("Failed to create offer");
+  //   }
+  // };
+
   const handleCreateOffer = async () => {
-    if (
-      !title ||
-      !description ||
-      !imageUrl ||
-      !priceLabel ||
-      !ctaLabel ||
-      !ctaHref
-    ) {
+    if (!title || !description || !priceLabel || !ctaLabel || !ctaHref) {
       toast.error("Please fill all fields");
       return;
     }
+    const newOffer = {
+      title,
+      description,
+      imageUrl,
+      priceLabel,
+      ctaLabel,
+      ctaHref,
+    };
 
     try {
       await axios.post("http://localhost:3000/api/v1/admin/latest-offers/add", {
-        title,
-        description,
-        imageUrl,
-        priceLabel,
-        ctaLabel,
-        ctaHref,
+        offer: [newOffer],
       });
 
       toast.success("Offer added!");
-
-      // Reset fields
       setTitle("");
       setDescription("");
       setImageUrl("");
       setPriceLabel("");
       setCtaLabel("");
       setCtaHref("");
-
       fetchOffers();
       setActiveSubTab("list");
-    } catch (err) {
+    } catch {
       toast.error("Failed to create offer");
     }
   };
@@ -208,12 +241,9 @@ export default function OfferTab() {
                       {offer.description}
                     </p>
 
-                    <p className="text-xs text-stone-500">
-                      {new Date(offer.startDate).toLocaleDateString()} →{" "}
-                      {new Date(offer.endDate).toLocaleDateString()}
-                    </p>
+                    <p className="text-xs text-stone-500"></p>
 
-                    <p className="text-sm font-bold">{offer.discount}% OFF</p>
+                    {/* <p className="text-sm font-bold">{offer.discount}% OFF</p> */}
                   </div>
 
                   <Button

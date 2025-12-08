@@ -570,17 +570,17 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleEditRoom = async (roomId: string, data: any) => {
-    try {
-      await axios.put(
-        `http://localhost:3000/api/v1/admin/rooms/${roomId}/edit`,
-        { data }
-      );
-      updateRoomStatus?.(roomId, data);
-    } catch {
-      toast.error("Room update failed");
-    }
-  };
+  // const handleEditRoom = async (roomId: string, data: any) => {
+  //   try {
+  //     await axios.put(
+  //       `http://localhost:3000/api/v1/admin/rooms/${roomId}/edit`,
+  //       { data }
+  //     );
+  //     updateRoomStatus?.(roomId, data);
+  //   } catch {
+  //     toast.error("Room update failed");
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-stone-50 to-white text-stone-800 flex">
@@ -661,9 +661,13 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "rooms" && (
+          // <RoomsTab
+          //   rooms={filteredRooms.length ? filteredRooms : rooms || []}
+          //   onToggleStatus={handleEditRoom}
+          // />
           <RoomsTab
             rooms={filteredRooms.length ? filteredRooms : rooms || []}
-            onToggleStatus={handleEditRoom}
+            refreshRooms={fetchRooms}
           />
         )}
 

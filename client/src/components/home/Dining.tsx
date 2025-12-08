@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "./Navbar";
+// import Footer from "./Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "../ui/badge";
 import { ScrollArea } from "../ui/scroll-area";
@@ -335,7 +335,7 @@ export default function Dining() {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${currentCategory.image})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/60 to-transparent" />
           <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
         </motion.div>
       </AnimatePresence>

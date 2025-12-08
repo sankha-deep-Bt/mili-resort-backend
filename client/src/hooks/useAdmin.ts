@@ -19,6 +19,7 @@ export const useAdmin = () => {
       setRooms(Array.isArray(res.data.rooms) ? res.data.rooms : []);
     } catch (err) {
       console.error("Room fetch error:", err);
+
       setRooms([]);
     }
   };

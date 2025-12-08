@@ -47,12 +47,10 @@ export default function CulturalEvents() {
     const fetchEvents = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/v1/event/highlights"
+          "http://localhost:3000/api/v1/event/highlight"
         );
 
-        if (Array.isArray(res.data) && res.data.length > 0) {
-          setEvents(res.data);
-        }
+        setEvents(res.data.highlights);
       } catch (err) {
         console.error("Failed to load events:", err);
         // fallback is already set, no need to update
@@ -64,7 +62,7 @@ export default function CulturalEvents() {
 
   return (
     <section id="cultural-events" className="py-24 bg-[#0b0704] text-white">
-      <div className="container mx-auto px-4 md:px-12 max-w-[83.75rem]">
+      <div className="container mx-auto px-4 md:px-12 max-w-335">
         <div className="text-center max-w-3xl mx-auto space-y-6">
           <p className="text-xs font-bold uppercase tracking-[0.6em] text-amber-400/80">
             Cultural Evenings
@@ -93,7 +91,7 @@ export default function CulturalEvents() {
                   className="absolute inset-0 h-full w-full object-cover"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
                 <div className="relative h-full flex flex-col justify-end p-8 space-y-3">
                   <span className="text-xs uppercase tracking-[0.5em] text-white/70">
                     {highlight.subtitle ?? "Cultural Rendezvous"}
