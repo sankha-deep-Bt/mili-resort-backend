@@ -9,8 +9,6 @@ export interface IRoom extends Document {
   capacity: number;
   occupancyDetails?: string;
   priceDetails?: string;
-  maxInStock?: number;
-  inStock?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -47,12 +45,6 @@ export const RoomSchema = new Schema<IRoom>(
     },
     priceDetails: {
       type: String,
-    },
-    maxInStock: {
-      type: Number,
-    },
-    inStock: {
-      type: Number,
     },
   },
   {

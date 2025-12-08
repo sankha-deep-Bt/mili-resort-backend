@@ -20,6 +20,7 @@ export const sendReservationEmail = async (
     rooms.map((room: any) => room.name).join(", ") || "Rooms Selected";
   const start = startDate.toISOString().split("T")[0];
   const end = endDate.toISOString().split("T")[0];
+  const guests = Number(adult) + Number(children);
 
   // -----------------------------
   // 3. PAYMENT URL (NO CHANGE IN FRONTEND)
@@ -30,7 +31,7 @@ export const sendReservationEmail = async (
           RoomName
         )}&price=${totalPricePerNight}&startDate=${
           startDate.toISOString().split("T")[0]
-        }&endDate=${endDate.toISOString().split("T")[0]}`
+        }&endDate=${endDate.toISOString().split("T")[0]}&guests=${guests}`
       : null;
 
   // -----------------------------

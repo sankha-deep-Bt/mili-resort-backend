@@ -1,0 +1,36 @@
+version: "1.0"
+
+services:
+  client:
+    build: ./client
+    container_name: web-client
+    ports:
+      - "5173:80" # Frontend runs on port 5173 externally
+    depends_on:
+      - server
+
+  server:
+    build: ./server
+    container_name: web-server
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/mili-resort
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: my-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

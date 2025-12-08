@@ -215,3 +215,11 @@ export const ReservationModel = mongoose.model<IReservation>(
   "Reservation",
   ReservationSchema
 );
+
+export const fetchReservationForPayment = async (reservationId: string) => {
+  const reservation = await ReservationModel.findById(reservationId);
+  if (!reservation) {
+    throw new Error("Reservation not found");
+  }
+  return reservation;
+};

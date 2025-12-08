@@ -10,7 +10,9 @@
     "build": "tsc",
     "create:admin": "ts-node src/scripts/admin.seed.ts",
     "create:rooms": "ts-node src/scripts/room.seed.ts",
-    "create:reservation": "ts-node src/scripts/reservation.seed.ts"
+    "create:reservation": "ts-node src/scripts/reservation.seed.ts",
+    "create:offers": "ts-node src/scripts/offer.seed.ts",
+    "create:events": "ts-node src/scripts/event.seed.ts"
   },
   "keywords": [],
   "author": "",

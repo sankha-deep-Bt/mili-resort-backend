@@ -14,7 +14,10 @@ import {
 } from "../services/admin.service";
 import { createEnquiry, fetchEnquiries } from "../models/eventEnquiry.model";
 import { RoomModel } from "../models/room.model";
-import { ReservationModel } from "../models/reservation.model";
+import {
+  fetchReservationForPayment,
+  ReservationModel,
+} from "../models/reservation.model";
 
 export const getMyReservation = asyncHandler(
   async (req: Request, res: Response) => {
@@ -253,5 +256,15 @@ export const deleteReservations = asyncHandler(
     }
     const reservations = await deleteCancelledReservations();
     return res.status(200).json({ message: "All reservations deleted" });
+  }
+);
+
+export const getReservationForPayment = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const reservation = await fetchReservationForPayment(id);
+    return res
+      .status(200)
+      .json({ message: "Reservation fetched", data: reservation });
   }
 );

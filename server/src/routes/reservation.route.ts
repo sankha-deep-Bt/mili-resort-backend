@@ -8,6 +8,7 @@ import {
   addEnquiry,
   getEnquiries,
   deleteReservations,
+  getReservationForPayment,
 } from "../controllers/reservation.controller";
 import { authenticate, userAllowed } from "../middleware/auth.middleware";
 // import { updateReservation } from "../services/user.service";
@@ -15,16 +16,17 @@ import { authenticate, userAllowed } from "../middleware/auth.middleware";
 const router = Router();
 
 // router.post("/email-add", addReservationWithEmail);
-router.get("/rooms", getRooms);
-router.post("/event-enquiry", addEnquiry);
 router.get("/event-enquiry", getEnquiries);
+router.get("/rooms", getRooms);
+router.get("/:id", getReservationForPayment);
+router.post("/event-enquiry", addEnquiry);
 
 router.use(authenticate);
 router.use(userAllowed);
 
-router.get("/", getMyReservation);
 router.post("/add", addReservation);
 router.post("/cancel", cancelReservation);
+router.get("/", getMyReservation);
 // router.put("/update", updateReservation);
 router.delete("/delete-cancel", deleteReservations);
 router.delete("/delete-cancel/:id", deleteReservations);

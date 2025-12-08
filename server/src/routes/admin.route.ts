@@ -32,6 +32,7 @@ router.post("/event/add", addEvent);
 router.put("/event/update", updateEvent);
 router.delete("/event/:eventId", deleteEvent);
 
+router.get("/latest-offers", getAllOffers);
 router.use(authenticate);
 router.use(adminOnly);
 
@@ -47,10 +48,9 @@ router.get("/reservations", getAllReservationRequest);
 // router.put("/reservation/cancel", cancelReservation);
 router.put("/reservation/change-status", changeReservationStatus);
 
-router.get("/latest-offers", getAllOffers);
 // router.get("/latest-offers/:eventId", getEvent);
 router.post("/latest-offers/add", addOffer);
 // router.put("/latest-offers/update", updateOffer);
-router.delete("/latest-offers/:Id", deleteOffer);
+router.delete("/latest-offers/:offerId", deleteOffer);
 
 export default router;

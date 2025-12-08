@@ -82,7 +82,15 @@ export const editRoom = asyncHandler(async (req: Request, res: Response) => {
   const roomId = req.params.roomId;
   const { data } = req.body;
 
+  if (!roomId) {
+    return res.status(400).json({ message: "Room id is required" });
+  }
+
   const room = await findRoomAndUpdate(roomId, data);
+
+  if (!room) {
+    return res.status(404).json({ message: "Room not found" });
+  }
 
   res.status(200).json({ room });
 });
@@ -175,6 +183,7 @@ export const changeReservationStatus = asyncHandler(
     }
 
     // Proceed to update status only if no conflicts were found for any room
+    console.log("guest", reservation.adult + reservation.children);
     const updated = await updateReservation(reservationId, { status });
     const emailHtml = await sendReservationEmail(reservation, status);
 

@@ -6,6 +6,7 @@ import { AppError } from "../utils/AppError";
 import { findUserById } from "./user.service";
 import mongoose from "mongoose";
 import { stat } from "fs";
+import { OfferModel } from "../models/offer.model";
 
 export const findAdmin = async (email: string) => {
   const admin = await AdminModel.findOne({ email });
@@ -15,6 +16,7 @@ export const findAdmin = async (email: string) => {
 export const findRoomAndUpdate = async (roomId: string, data: any) => {
   const room = await RoomModel.findByIdAndUpdate(roomId, data, {
     new: true,
+    runValidators: true,
   });
   if (!room) {
     throw new AppError("Room not found", 404);
@@ -90,6 +92,6 @@ export const deleteCancelledReservationByID = async (reservationId: string) => {
 
 //TODO:complete
 export const fetchAllOffers = async () => {
-  const offers = await RoomModel.find({ offer: true });
+  const offers = await OfferModel.find();
   return offers;
 };
