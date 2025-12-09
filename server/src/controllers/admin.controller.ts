@@ -33,6 +33,8 @@ import {
   deleteOfferById,
   findOfferById,
 } from "../models/offer.model";
+import { upload } from "../utils/multer";
+import { uploadToCloudinary } from "../config/cloudinary";
 
 export const adminLogin = asyncHandler(
   async (req: Request<{}, {}, AdminLoginInput>, res: Response) => {
@@ -78,21 +80,66 @@ export const AddRoom = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({ message: "Room created", ...newRoom });
 });
 
+// export const editRoom = asyncHandler(async (req: Request, res: Response) => {
+//   const roomId = req.params.roomId;
+//   const { data } = req.body;
+
+//   if (!roomId) {
+//     return res.status(400).json({ message: "Room id is required" });
+//   }
+
+//   const room = await findRoomAndUpdate(roomId, data);
+
+//   if (!room) {
+//     return res.status(404).json({ message: "Room not found" });
+//   }
+
+//   res.status(200).json({ room });
+// });
+
 export const editRoom = asyncHandler(async (req: Request, res: Response) => {
   const roomId = req.params.roomId;
-  const { data } = req.body;
 
   if (!roomId) {
     return res.status(400).json({ message: "Room id is required" });
   }
 
-  const room = await findRoomAndUpdate(roomId, data);
+  // Parse JSON in req.body.data
+  let data: any = {};
+  try {
+    data = JSON.parse(req.body.data || "{}");
+  } catch {
+    return res.status(400).json({ message: "Invalid data format" });
+  }
 
-  if (!room) {
+  // Uploaded image files from Multer
+  const files = req.files as Express.Multer.File[] | undefined;
+  const newUploadedImages: string[] = [];
+
+  if (files && files.length > 0) {
+    for (const file of files) {
+      const url = await uploadToCloudinary(file.path, "rooms");
+      if (url) newUploadedImages.push(url);
+    }
+  }
+
+  // IMPORTANT: merge into `image`, not `images`
+  if (!Array.isArray(data.image)) data.image = [];
+
+  if (newUploadedImages.length > 0) {
+    data.image = [...data.image, ...newUploadedImages];
+  }
+
+  const updatedRoom = await findRoomAndUpdate(roomId, data);
+
+  if (!updatedRoom) {
     return res.status(404).json({ message: "Room not found" });
   }
 
-  res.status(200).json({ room });
+  res.status(200).json({
+    message: "Room updated successfully",
+    room: updatedRoom,
+  });
 });
 
 export const getAllBooking = asyncHandler(
@@ -140,7 +187,7 @@ export const changeReservationStatus = asyncHandler(
       // 🟢 Iterate over all requested rooms and check for conflicts individually
       for (const roomItem of roomsToBook) {
         const roomId = roomItem.roomId;
-        const quantity = roomItem.quantity || 1;
+        // const quantity = roomItem.quantity || 1;
 
         // Check for conflicts for this specific room ID
         const conflicts = await ReservationModel.find({
@@ -250,8 +297,25 @@ export const getAllOffers = asyncHandler(
 );
 
 export const addOffer = asyncHandler(async (req: Request, res: Response) => {
-  const { offer } = req.body;
-  const newOffer = await createNewOffer(offer);
+  const { title, description, priceLabel, ctaLabel, ctaHref } = req.body;
+  const imagePath = req.file?.path;
+
+  if (!imagePath) {
+    return res.status(400).json({ message: "Image is required" });
+  }
+
+  const imageUrl = await uploadToCloudinary(imagePath);
+  if (!imageUrl) {
+    return res.status(400).json({ message: "Image upload failed" });
+  }
+  const newOffer = await createNewOffer(
+    title,
+    description,
+    priceLabel,
+    ctaLabel,
+    ctaHref,
+    imageUrl
+  );
   res.status(200).json({ message: "Offer added", newOffer });
 });
 

@@ -1,84 +1,3 @@
-// import { useState, useMemo } from "react";
-// import {
-//   Card,
-//   CardContent,
-//   CardHeader,
-//   CardTitle,
-//   CardDescription,
-// } from "../ui/card";
-// import { Button } from "../ui/button";
-
-// export default function RoomsTab({ rooms, handleEditRoom }: any) {
-//   const ITEMS_PER_PAGE = 4;
-//   const [currentPage, setCurrentPage] = useState(1);
-
-//   const paginatedRooms = useMemo(() => {
-//     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-//     return rooms.slice(start, start + ITEMS_PER_PAGE);
-//   }, [rooms, currentPage]);
-
-//   return (
-//     <>
-//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-//         {rooms && rooms.length > 0 ? (
-//           paginatedRooms.map((room: any) => (
-//             <Card key={room._id} className="overflow-hidden">
-//               <div
-//                 className="h-44 bg-cover bg-center"
-//                 style={{
-//                   backgroundImage: `url(${
-//                     room.image?.length > 0 ? room.image : "/fallback.jpg"
-//                   })`,
-//                 }}
-//               />
-//               <CardHeader>
-//                 <CardTitle>{room.name}</CardTitle>
-//                 <CardDescription>
-//                   {room.Roomtype} • ₹{room.price?.toLocaleString("en-IN")}/night{" "}
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 <p>{room.description}</p>
-//                 <p>{room.priceDetails}</p>
-//                 <p className="text-sm text-stone-500 mb-3">
-//                   Capacity: {room.capacity} {room.occupancyDetails}
-//                 </p>
-
-//                 <Button
-//                   className="w-full"
-//                   onClick={() => handleEditRoom(room._id)}
-//                 >
-//                   Edit Room
-//                 </Button>
-//               </CardContent>
-//             </Card>
-//           ))
-//         ) : (
-//           <div className="text-stone-500">No rooms available.</div>
-//         )}
-//       </div>
-//       <div className="flex justify-end gap-2 mt-4">
-//         <Button
-//           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-//           disabled={currentPage === 1}
-//           size="sm"
-//           variant="outline"
-//         >
-//           Prev
-//         </Button>
-//         <Button
-//           onClick={() => setCurrentPage((p) => p + 1)}
-//           disabled={currentPage * ITEMS_PER_PAGE >= rooms.length}
-//           size="sm"
-//           variant="outline"
-//         >
-//           Next
-//         </Button>
-//       </div>
-//     </>
-//   );
-// }
-
 import { useState, useMemo } from "react";
 import axios from "axios";
 
@@ -108,7 +27,10 @@ export default function RoomsTab({ rooms, refreshRooms }: any) {
   // modal state
   const [open, setOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
+
+  // FORM DATA
   const [formData, setFormData] = useState<any>({});
+  const [newImages, setNewImages] = useState<File[]>([]);
 
   const paginatedRooms = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -121,6 +43,7 @@ export default function RoomsTab({ rooms, refreshRooms }: any) {
 
     setSelectedRoom(room);
     setFormData(room);
+    setNewImages([]); // reset file input
     setOpen(true);
   };
 
@@ -133,19 +56,53 @@ export default function RoomsTab({ rooms, refreshRooms }: any) {
     }));
   };
 
+  const handleFileUpload = (e: any) => {
+    const files = Array.from(e.target.files);
+    setNewImages((prev: File[]) => [...prev, ...files] as File[]);
+  };
+
+  const removeExistingImage = (index: number) => {
+    const updatedImages = formData.image.filter(
+      (_: any, i: number) => i !== index
+    );
+
+    setFormData({
+      ...formData,
+      image: updatedImages,
+    });
+  };
+
+  const removeNewImage = (index: number) => {
+    const updated = newImages.filter((_, i) => i !== index);
+    setNewImages(updated);
+  };
+
   const handleSubmit = async () => {
     try {
+      const fd = new FormData();
+
+      // Append text data
+      fd.append("data", JSON.stringify(formData));
+
+      // Append new image files
+      newImages.forEach((file) => fd.append("images", file));
+
       await axios.put(
         `http://localhost:3000/api/v1/admin/rooms/${selectedRoom._id}/edit`,
-        { data: formData }
+        fd,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
       setOpen(false);
       toast.success("Room updated successfully");
-      refreshRooms(); // reload list
+      refreshRooms();
     } catch (err) {
       console.error(err);
-      alert("Failed to update room");
+      toast.error("Failed to update room");
     }
   };
 
@@ -271,58 +228,55 @@ export default function RoomsTab({ rooms, refreshRooms }: any) {
                 placeholder="Price Details"
               />
 
-              {/* IMAGE FIELDS */}
+              {/* EXISTING IMAGES */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Room Images</label>
+                <label className="text-sm font-medium">Existing Images</label>
 
                 {formData.image?.map((img: string, index: number) => (
                   <div key={index} className="flex items-center gap-2">
-                    <Input
-                      value={img}
-                      onChange={(e) => {
-                        const newImages = [...formData.image];
-                        newImages[index] = e.target.value;
-
-                        setFormData({
-                          ...formData,
-                          image: newImages,
-                        });
-                      }}
-                      placeholder={`Image URL ${index + 1}`}
+                    <img
+                      src={img}
+                      className="h-16 w-16 rounded object-cover border"
                     />
 
-                    {/* REMOVE IMAGE BUTTON */}
                     <Button
                       variant="destructive"
                       size="icon"
-                      onClick={() => {
-                        const newImages = formData.image.filter(
-                          (_: any, i: number) => i !== index
-                        );
-                        setFormData({
-                          ...formData,
-                          image: newImages,
-                        });
-                      }}
+                      onClick={() => removeExistingImage(index)}
                     >
                       ✕
                     </Button>
                   </div>
                 ))}
+              </div>
 
-                {/* ADD NEW IMAGE BUTTON */}
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() =>
-                    setFormData({
-                      ...formData,
-                      image: [...(formData.image || []), ""],
-                    })
-                  }
-                >
-                  + Add Image
-                </Button>
+              {/* NEW IMAGES */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Upload New Images</label>
+
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileUpload}
+                />
+
+                {newImages.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 text-sm text-stone-700"
+                  >
+                    {file.name}
+
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => removeNewImage(index)}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
           )}

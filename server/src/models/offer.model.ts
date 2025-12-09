@@ -44,8 +44,22 @@ const offerSchema = new Schema<IOffer>(
 
 export const OfferModel = mongoose.model<IOffer>("Offer", offerSchema);
 
-export const createNewOffer = async (offer: IOffer) => {
-  const newOffer = await OfferModel.create(offer);
+export const createNewOffer = async (
+  title: string,
+  description: string,
+  priceLabel: string,
+  ctaLabel: string,
+  ctaHref: string,
+  imageUrl: string
+) => {
+  const newOffer = await OfferModel.create({
+    title,
+    description,
+    priceLabel,
+    ctaLabel,
+    ctaHref,
+    imageUrl,
+  });
   return newOffer;
 };
 

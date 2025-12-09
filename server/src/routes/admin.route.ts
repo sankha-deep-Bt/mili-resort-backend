@@ -40,7 +40,7 @@ router.delete("/event/:eventId", deleteEvent);
 
 router.get("/rooms", getRooms);
 router.post("/rooms/add-room", AddRoom);
-router.put("/rooms/:roomId/edit", upload.single("image"), editRoom);
+router.put("/rooms/:roomId/edit", upload.array("images", 5), editRoom);
 
 router.get("/users", getUser);
 

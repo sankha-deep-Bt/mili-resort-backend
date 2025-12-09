@@ -5,7 +5,6 @@ export interface IEvent extends Document {
   subtitle: string;
   description: string;
   image: string;
-  showcase: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,11 +26,6 @@ export const EventSchema = new Schema<IEvent>(
     image: {
       type: String,
       required: true,
-    },
-    showcase: {
-      type: Boolean,
-      required: true,
-      default: false,
     },
   },
   {

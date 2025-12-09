@@ -12,7 +12,7 @@ import { upload } from "../utils/multer";
 
 const router = Router();
 
-router.get("/highlight", getHighlight);
+// router.get("/highlight", getHighlight);
 router.get("/get-all", getAllEvents);
 router.get("/event/get/:eventId", getEvent);
 router.post("/event/add", upload.single("image"), addEvent);
