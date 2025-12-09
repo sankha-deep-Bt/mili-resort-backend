@@ -8,6 +8,7 @@ import {
   findEventById,
   updateEventById,
 } from "../models/event.model";
+import { uploadToCloudinary } from "../config/cloudinary";
 
 export const getAllEvents = asyncHandler(
   async (req: Request, res: Response) => {
@@ -29,7 +30,14 @@ export const getEvent = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const addEvent = asyncHandler(async (req: Request, res: Response) => {
-  const { title, subtitle, description, image } = req.body;
+  const { title, subtitle, description } = req.body;
+  const imagePath = req.file?.path;
+
+  if (!imagePath) {
+    return res.status(400).json({ message: "Image is required" });
+  }
+
+  const image = await uploadToCloudinary(imagePath);
   const event = createNewEvent({ title, subtitle, description, image });
 
   return res.status(200).json({ message: "Event created", data: event });
@@ -41,7 +49,14 @@ export const cancelEvent = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateEvent = asyncHandler(async (req: Request, res: Response) => {
   const eventId = req.params.eventId;
-  const { title, subtitle, description, image, showcase } = req.body;
+  const { title, subtitle, description, showcase } = req.body;
+  const imagePath = req.file?.path;
+
+  if (!imagePath) {
+    return res.status(400).json({ message: "Image is required" });
+  }
+
+  const image = await uploadToCloudinary(imagePath);
   const event = await updateEventById(eventId, {
     title,
     subtitle,

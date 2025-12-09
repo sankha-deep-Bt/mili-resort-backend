@@ -8,9 +8,3 @@ const storage = multer.diskStorage({
 });
 
 export const upload = multer({ storage });
-
-// router.post("/upload/event-image", upload.single("image"), (req, res) => {
-//   res.json({
-//     url: `/images/${req.file.filename}`,
-//   });
-// });
