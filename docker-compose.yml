@@ -4,7 +4,7 @@ services:
     container_name: web-client
     restart: unless-stopped
     ports:
-      - "5173:80" # Frontend runs on port 5173 externally
+      - "4000:80" # Frontend runs on port 5173 externally
     networks:
       - mili-resort
     depends_on:
@@ -13,8 +13,6 @@ services:
   server:
     build:
       context: ./server
-      args:
-        MONGO_URI: mongodb://root:password@mongodb:27017/mili-resort?authSource=admin
     container_name: web-server
     restart: unless-stopped
     ports:
@@ -23,10 +21,6 @@ services:
       - mili-resort
     env_file:
       - .env.production
-    environment:
-      - NODE_ENV=production
-      - MONGO_URI=mongodb://root:password@mongodb:27017/mili-resort?authSource=admin
-
     depends_on:
       - mongodb
 
