@@ -1,8 +1,15 @@
 import { config } from "dotenv";
 
-config({
-  path: `./.env.${process.env.NODE_ENV || "development"}.local`,
-});
+const currentEnv = process.env.NODE_ENV || "development";
+
+if (currentEnv !== "production") {
+  config({
+    path: `./.env.${currentEnv}.local`,
+  });
+} else {
+  // In production Docker, env vars come from docker-compose, but call config() anyway
+  config();
+}
 
 const getEnv = (key: string, defaultValue?: string): string => {
   const value = process.env[key] || defaultValue;
@@ -20,7 +27,7 @@ export const PORT = getEnv("PORT", "3000");
 export const MONGO_URI = getEnv("MONGO_URI");
 export const JWT_SECRET = getEnv("JWT_SECRET");
 export const JWT_REFRESH_SECRET = getEnv("JWT_REFRESH_SECRET");
-export const CLIENT_URL = getEnv("CLIENT_URL", "http://localhost:3000");
+export const CLIENT_URL = getEnv("CLIENT_URL", "http://localhost:5173");
 export const SMTP_HOST = getEnv("SMTP_HOST");
 export const SMTP_PORT = getEnv("SMTP_PORT");
 export const SMTP_USER = getEnv("SMTP_USER");

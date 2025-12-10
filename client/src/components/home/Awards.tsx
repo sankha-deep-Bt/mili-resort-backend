@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export default function Awards() {
   return (
     <section className="py-24 md:py-36 bg-white text-zinc-700">
-      <div className="container mx-auto px-4 md:px-12 max-w-[57.5rem]">
+      <div className="container mx-auto px-4 md:px-12 max-w-230">
         <div className="flex flex-col md:flex-row items-center gap-12">
           <motion.div
             initial={{ opacity: 0, x: -30 }}

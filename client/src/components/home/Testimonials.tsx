@@ -71,7 +71,7 @@ export default function Testimonials() {
 
   return (
     <section className="py-24 bg-white overflow-hidden">
-      <div className="container mx-auto px-4 md:px-12 max-w-[83.75rem]">
+      <div className="container mx-auto px-4 md:px-12 max-w-335">
         <div className="text-center mb-14 space-y-4">
           <p className="text-primary text-xs font-bold uppercase tracking-[0.5em]">
             West Bengal Voices
@@ -95,7 +95,7 @@ export default function Testimonials() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.5 }}
-                className="aspect-[4/3] w-full rounded-[2.5rem] overflow-hidden shadow-2xl"
+                className="aspect-4/3 w-full rounded-[2.5rem] overflow-hidden shadow-2xl"
               >
                 <img
                   src={currentTestimonial.image}

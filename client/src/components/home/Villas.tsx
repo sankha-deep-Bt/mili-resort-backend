@@ -1,45 +1,7 @@
-import { motion, useAnimationControls } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-
-// const villas = [
-//   {
-//     name: "Ground Floor Deluxe Room",
-//     image:
-//       "https://harmless-tapir-303.convex.cloud/api/storage/595b9948-f517-4407-bec4-488fe0266a5b",
-//   },
-//   {
-//     name: "First Floor Super Deluxe Room",
-//     image:
-//       "https://harmless-tapir-303.convex.cloud/api/storage/89f4a0d1-4505-4bf7-9c06-f445bb2e93a4",
-//   },
-//   {
-//     name: "Ground Floor Cottage Room Double bed",
-//     image:
-//       "https://harmless-tapir-303.convex.cloud/api/storage/6546e674-a31b-4cd0-920c-ca8d3300081b",
-//   },
-//   {
-//     name: "Ground Floor Cottage Room 4 beded",
-//     image:
-//       "https://harmless-tapir-303.convex.cloud/api/storage/594daab9-4f31-4193-83e9-93b452d634ad",
-//   },
-//   {
-//     name: "Ground Floor Standard Room",
-//     image:
-//       "https://harmless-tapir-303.convex.cloud/api/storage/9333e614-1155-4f90-be8b-1e2c47685e97",
-//   },
-//   {
-//     name: "1st floor & 2nd floor Standard ac Double Bed Room",
-//     image:
-//       "https://harmless-tapir-303.convex.cloud/api/storage/19c1e9be-8454-4a15-981b-598bfe66a02c",
-//   },
-//   {
-//     name: "1st floor & 2nd floor Standard ac 4 Beded Room",
-//     image:
-//       "https://harmless-tapir-303.convex.cloud/api/storage/4b39fa3d-f2b1-4cc1-90cc-b3e9720415f5",
-//   },
-// ];
 
 export default function Villas() {
   const [currentIndex, setCurrentIndex] = useState(0);

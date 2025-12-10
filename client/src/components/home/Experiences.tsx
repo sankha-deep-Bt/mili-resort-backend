@@ -15,13 +15,13 @@ export default function Experience() {
 
   return (
     <section className="py-24 bg-[#f3f4f6]">
-      <div className="container mx-auto px-4 md:px-12 max-w-[68.75rem]">
+      <div className="container mx-auto px-4 md:px-12 max-w-275">
         <div className="flex flex-col md:flex-row items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-white p-12 md:max-w-[28rem] md:-mr-24 relative z-10 shadow-xl"
+            className="bg-white p-12 md:max-w-md md:-mr-24 relative z-10 shadow-xl"
           >
             <div className="text-center">
               <h2 className="text-neutral-800 text-xs font-bold tracking-widest uppercase mb-3">
@@ -42,8 +42,8 @@ export default function Experience() {
                 Learn More
               </button>
             </div>
-            <div className="mt-8 relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-6 text-left text-white shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-              <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.2),_transparent_55%)]" />
+            <div className="mt-8 relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-neutral-900 via-neutral-950 to-black p-6 text-left text-white shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+              <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),transparent_55%)]" />
               <div className="relative space-y-6">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -96,7 +96,7 @@ export default function Experience() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="w-full md:flex-1 h-[36rem] bg-[url('https://assets.website-files.com/5b4f3cc33f2e3868c5a5b80c/5b56ca5118c0117abec40440_experience_placeholder.jpg')] bg-cover bg-center relative group cursor-pointer"
+            className="w-full md:flex-1 h-144 bg-[url('https://assets.website-files.com/5b4f3cc33f2e3868c5a5b80c/5b56ca5118c0117abec40440_experience_placeholder.jpg')] bg-cover bg-center relative group cursor-pointer"
           >
             <button
               type="button"

@@ -157,6 +157,7 @@ export default function OfferTab() {
             />
 
             {/* Image Upload */}
+            <p>Upload Image</p>
             <input
               type="file"
               accept="image/*"

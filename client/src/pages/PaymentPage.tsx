@@ -38,8 +38,17 @@ const PaymentPage = () => {
           setError("Reservation does not exist");
         }
 
+        if (res.data.data.status === "cancelled") {
+          setError("Reservation has been cancelled");
+          setLoading(false);
+          return;
+        }
+        console.log("res.data", res.data);
+
         const reservationData = res.data;
         setReservation(reservationData);
+        console.log(reservationData);
+        console.log(reservation);
 
         if (reservationData.paid) {
           setError("This reservation is already paid.");
@@ -158,6 +167,19 @@ const PaymentPage = () => {
         {error}
       </p>
     );
+  if (!reservation)
+    return (
+      <p className="p-10 text-center text-red-600 font-semibold text-lg">
+        Reservation not found
+      </p>
+    );
+  // if (!reservation.status === "cancelled") {
+  //   return (
+  //     <p className="p-10 text-center text-red-600 font-semibold text-lg">
+  //       Reservation not found
+  //     </p>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 to-stone-100 p-6">

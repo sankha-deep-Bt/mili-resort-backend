@@ -15,7 +15,7 @@ export default function DeliveryPolicy() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
-      <main className="relative isolate overflow-hidden bg-gradient-to-b from-black via-[#090909] to-black">
+      <main className="relative isolate overflow-hidden bg-linear-to-b from-black via-[#090909] to-black">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_50%)]" />
         <section className="relative mx-auto max-w-4xl px-6 pt-28 pb-10 text-center">
           <motion.span
@@ -65,7 +65,7 @@ export default function DeliveryPolicy() {
             ))}
           </div>
 
-          <div className="mt-10 rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent p-8 text-sm text-white/80">
+          <div className="mt-10 rounded-3xl border border-white/10 bg-linear-to-br from-emerald-500/10 via-transparent to-transparent p-8 text-sm text-white/80">
             Orders are confirmed and delivery details shared via the email ID
             used during registration. For any assistance, please reach out to
             our concierge desk using the contact information above—we are happy

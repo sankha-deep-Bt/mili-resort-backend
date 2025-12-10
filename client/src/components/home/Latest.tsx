@@ -141,6 +141,27 @@ export default function Latest({
   const cardsToRender: OfferCard[] =
     offers.length > 0 ? offers : FALLBACK_OFFERS;
 
+  if (loading)
+    return (
+      <section id="latest-offers" className="py-24 bg-stone-50">
+        <div className="container mx-auto px-4 md:px-12 max-w-335">
+          <div className="text-center mb-14 space-y-4">
+            <p className="text-primary text-xs font-bold uppercase tracking-[0.5em]">
+              {eyebrow}
+            </p>
+            <h4 className="text-3xl md:text-4xl font-light uppercase tracking-widest">
+              {title}
+            </h4>
+            {description && (
+              <p className="text-sm text-zinc-500 max-w-3xl mx-auto">
+                {description}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+
   return (
     <section id="latest-offers" className="py-24 bg-stone-50">
       <div className="container mx-auto px-4 md:px-12 max-w-335">

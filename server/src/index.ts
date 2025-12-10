@@ -6,6 +6,16 @@ import connectToDatabase from "./config/dbConnect";
 import logger from "./config/logger";
 import { Server } from "http";
 
+import { config } from "dotenv";
+
+const currentEnv = process.env.NODE_ENV || "development";
+
+if (currentEnv !== "production") {
+  config({
+    path: `./.env.${currentEnv}.local`,
+  });
+}
+
 let server: Server | null = null;
 connectToDatabase()
   .then(

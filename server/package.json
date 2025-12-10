@@ -8,8 +8,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "create:admin": "ts-node src/scripts/admin.seed.ts",
-    "create:rooms": "ts-node src/scripts/room.seed.ts",
+    "create:admin": "node dist/scripts/admin.seed.js",
+    "create:rooms": "node dist/scripts/room.seed.js",
     "create:reservation": "ts-node src/scripts/reservation.seed.ts",
     "create:offers": "ts-node src/scripts/offer.seed.ts",
     "create:events": "ts-node src/scripts/event.seed.ts"

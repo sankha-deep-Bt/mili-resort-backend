@@ -15,8 +15,8 @@ export default function RefundPolicy() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
-      <main className="relative isolate overflow-hidden bg-gradient-to-b from-black via-[#0a0a0a] to-black">
-        <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.25),_transparent_60%)]" />
+      <main className="relative isolate overflow-hidden bg-linear-to-b from-black via-[#0a0a0a] to-black">
+        <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.25),transparent_60%)]" />
         <section className="relative mx-auto max-w-4xl px-6 pt-28 pb-12 text-center">
           <motion.p
             initial={{ opacity: 0, y: 18 }}
@@ -63,7 +63,7 @@ export default function RefundPolicy() {
             ))}
           </div>
 
-          <div className="mt-10 rounded-3xl border border-white/10 bg-gradient-to-br from-rose-500/15 via-transparent to-transparent p-8 text-sm text-white/80">
+          <div className="mt-10 rounded-3xl border border-white/10 bg-linear-to-br from-rose-500/15 via-transparent to-transparent p-8 text-sm text-white/80">
             For complaints about manufacturer-warranted products, please contact
             the manufacturer directly. All refund communications should be
             routed through our customer service desk to ensure swift resolution.

@@ -11,7 +11,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Trash2, X } from "lucide-react";
 
-export default function EventsTab({ enquiries, onUpdateStatus }: any) {
+export default function EventsTab({ enquiries }: any) {
   const [subTab, setSubTab] = useState<"existing" | "add" | "enquiries">(
     "existing"
   );

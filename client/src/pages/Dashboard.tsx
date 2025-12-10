@@ -214,10 +214,10 @@ export default function CustomerDashboard() {
 
   const [bookings, setBookings] = useState<any[]>([]);
   const [rooms, setRooms] = useState<any[]>([]);
-  const [refresh, setRefresh] = useState(false);
+  // const [refresh, setRefresh] = useState(false);
 
   const handleBookingCompleted = () => {
-    setRefresh((prev) => !prev);
+    // setRefresh((prev) => !prev);
     fetchData();
   };
 

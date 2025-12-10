@@ -19,8 +19,8 @@ export default function TermsConditions() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
-      <main className="relative isolate overflow-hidden bg-gradient-to-b from-black via-[#0f0f0f] to-black">
-        <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.15),_transparent_60%)]" />
+      <main className="relative isolate overflow-hidden bg-linear-to-b from-black via-[#0f0f0f] to-black">
+        <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.15),transparent_60%)]" />
         <section className="relative mx-auto max-w-5xl px-6 pt-28 pb-12 text-center">
           <motion.p
             initial={{ opacity: 0, y: 24 }}
@@ -51,7 +51,7 @@ export default function TermsConditions() {
         </section>
 
         <section className="relative mx-auto max-w-5xl px-6 pb-20">
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur">
+          <div className="rounded-4xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur">
             <div className="grid gap-6 md:grid-cols-2">
               {clauses.map((item, index) => (
                 <motion.article

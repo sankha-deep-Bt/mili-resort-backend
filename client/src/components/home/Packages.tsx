@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export default function Packages() {
   return (
     <section id="packages" className="py-24 bg-stone-100">
-      <div className="container mx-auto px-4 md:px-12 max-w-[68.75rem]">
+      <div className="container mx-auto px-4 md:px-12 max-w-275">
         <div className="text-center mb-16">
           <h2 className="text-lg font-light uppercase tracking-widest">
             Popular Packages
@@ -20,7 +20,7 @@ export default function Packages() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="w-full md:w-1/2 h-[37.5rem] relative group cursor-pointer overflow-hidden"
+              className="w-full md:w-1/2 h-150 relative group cursor-pointer overflow-hidden"
             >
               <div className="absolute inset-0 bg-[url('https://harmless-tapir-303.convex.cloud/api/storage/2b12aa00-ce60-4a93-84c5-fadb1f67c302')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute top-0 right-0 bg-primary text-white px-6 py-4 text-xs font-bold tracking-widest uppercase">
@@ -62,7 +62,7 @@ export default function Packages() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="w-full md:w-1/2 h-[37.5rem] relative group cursor-pointer overflow-hidden"
+              className="w-full md:w-1/2 h-150 relative group cursor-pointer overflow-hidden"
             >
               <div className="absolute inset-0 bg-[url('https://harmless-tapir-303.convex.cloud/api/storage/3f8e7867-0d46-4250-a62c-63b311793454')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute top-0 right-0 bg-primary text-white px-6 py-4 text-xs font-bold tracking-widest uppercase">

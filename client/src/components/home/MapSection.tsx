@@ -4,7 +4,7 @@ import { MapPin, Phone, Mail } from "lucide-react";
 export default function MapSection() {
   return (
     <section className="py-24 bg-stone-50">
-      <div className="container mx-auto px-4 md:px-12 max-w-[68.75rem]">
+      <div className="container mx-auto px-4 md:px-12 max-w-275">
         <div className="text-center mb-16">
           <h2 className="text-lg font-light uppercase tracking-widest mb-4">
             Find Us
