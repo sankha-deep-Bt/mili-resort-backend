@@ -7,9 +7,9 @@ import {
   CardDescription,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Trash2, X } from "lucide-react";
+import api from "../../utils/axios";
 
 export default function EventsTab({ enquiries }: any) {
   const [subTab, setSubTab] = useState<"existing" | "add" | "enquiries">(
@@ -32,7 +32,7 @@ export default function EventsTab({ enquiries }: any) {
   // Fetch existing event highlights
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/v1/event/get-all");
+      const res = await api.get("/event/get-all");
       setHighlightEvents(res.data.events || []);
     } catch (err) {
       console.error("Failed to load events:", err);
@@ -63,11 +63,9 @@ export default function EventsTab({ enquiries }: any) {
       formData.append("description", newEvent.description);
       if (newEvent.image) formData.append("image", newEvent.image);
 
-      await axios.post(
-        "http://localhost:3000/api/v1/admin/event/add",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      await api.post("/admin/event/add", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       toast.success("Event created successfully!");
 
@@ -108,11 +106,9 @@ export default function EventsTab({ enquiries }: any) {
         formData.append("image", editEvent.image);
       }
 
-      await axios.put(
-        `http://localhost:3000/api/v1/admin/event/${editEvent._id}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      await api.put(`/admin/event/${editEvent._id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       toast.success("Event updated!");
       setShowEditModal(false);
@@ -128,7 +124,7 @@ export default function EventsTab({ enquiries }: any) {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/v1/admin/event/${id}`);
+      await api.delete(`/admin/event/${id}`);
       toast.success("Event deleted");
       fetchEvents();
     } catch (err) {

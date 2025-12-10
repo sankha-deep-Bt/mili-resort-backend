@@ -1,6 +1,4 @@
 import { useState, useMemo } from "react";
-import axios from "axios";
-
 import {
   Card,
   CardContent,
@@ -19,6 +17,7 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import toast from "react-hot-toast";
+import api from "../../utils/axios";
 
 export default function RoomsTab({ rooms, refreshRooms }: any) {
   const ITEMS_PER_PAGE = 4;
@@ -87,15 +86,11 @@ export default function RoomsTab({ rooms, refreshRooms }: any) {
       // Append new image files
       newImages.forEach((file) => fd.append("images", file));
 
-      await axios.put(
-        `http://localhost:3000/api/v1/admin/rooms/${selectedRoom._id}/edit`,
-        fd,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await api.put(`/admin/rooms/${selectedRoom._id}/edit`, fd, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setOpen(false);
       toast.success("Room updated successfully");

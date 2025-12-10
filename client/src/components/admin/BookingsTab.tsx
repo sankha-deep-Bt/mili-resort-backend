@@ -32,18 +32,6 @@ export default function BookingsTab({
   const [statusFilter, setStatusFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");
 
-  // const cancelledBookingIds = useMemo(() => {
-  //   return bookings
-  //     .filter((booking: any) => booking.status === "cancelled")
-  //     .map((booking: any) => booking._id);
-  // }, [bookings]);
-
-  // const cancelledBookingIds = useMemo(() => {
-  //   return bookings
-  //     .filter((b: any) => ["cancelled", "rejected"].includes(b.status))
-  //     .map((b: any) => b._id);
-  // }, [bookings]);
-
   const handleDeleteCancelled = () => {
     if (onDelete && cancelledBookingIds.length > 0) {
       onDelete(cancelledBookingIds);
@@ -71,10 +59,6 @@ export default function BookingsTab({
       .map((b: any) => b._id);
   }, [filteredBookings]);
 
-  // const paginatedBookings = useMemo(() => {
-  //   const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  //   return bookings.slice(start, start + ITEMS_PER_PAGE);
-  // }, [bookings, currentPage]);
   const paginatedBookings = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredBookings.slice(start, start + ITEMS_PER_PAGE);

@@ -1,14 +1,11 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import { CheckCircle2, X } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
-
-// IMPORTANT: Set your Backend URL
-const API_BASE = "http://localhost:3000/api/v1";
+import api from "../../utils/axios";
 
 export default function Booking() {
   const [rooms, setRooms] = useState<{ _id: string; name: string }[]>([]);
@@ -32,9 +29,7 @@ export default function Booking() {
 
   const fetchData = async () => {
     try {
-      const roomsRes = await axios.get(
-        "http://localhost:3000/api/v1/reservation/rooms"
-      );
+      const roomsRes = await api.get("/reservation/rooms");
 
       setRooms(Array.isArray(roomsRes.data.rooms) ? roomsRes.data.rooms : []);
       setLoadingRooms(false);
@@ -91,7 +86,7 @@ export default function Booking() {
     try {
       setIsSubmitting(true);
 
-      await axios.post(`${API_BASE}/reservation/add`, bookingSummary);
+      await api.post(`/reservation/add`, bookingSummary);
 
       toast.success("Booking request submitted!");
       setConfirmation(bookingSummary);

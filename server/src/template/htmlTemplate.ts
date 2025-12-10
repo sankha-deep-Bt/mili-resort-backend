@@ -1,3 +1,5 @@
+import { CLIENT_URL } from "../config/env";
+
 export const sendReservationEmail = async (
   reservation: any,
   status: string
@@ -27,7 +29,7 @@ export const sendReservationEmail = async (
   // -----------------------------
   const paymentUrl =
     status !== "cancelled" && status !== "rejected"
-      ? `http://localhost:5173/payment?reservationId=${_id}&roomName=${encodeURIComponent(
+      ? `${CLIENT_URL}/payment?reservationId=${_id}&roomName=${encodeURIComponent(
           RoomName
         )}&price=${totalPricePerNight}&startDate=${
           startDate.toISOString().split("T")[0]

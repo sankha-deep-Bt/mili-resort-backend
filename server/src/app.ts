@@ -31,6 +31,7 @@ app.use(
 app.use(
   cors({
     origin: [
+      "http://72.61.238.120:4000",
       "http://localhost:4000",
       "http://localhost:5173",
       "http://localhost:5174",

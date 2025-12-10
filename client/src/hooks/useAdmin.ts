@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/axios";
 
 export const useAdmin = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -8,12 +8,9 @@ export const useAdmin = () => {
 
   const fetchRooms = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/v1/reservation/rooms",
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await api.get("/reservation/rooms", {
+        withCredentials: true,
+      });
 
       // IMPORTANT FIX
       setRooms(Array.isArray(res.data.rooms) ? res.data.rooms : []);
@@ -26,10 +23,9 @@ export const useAdmin = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/v1/admin/reservations",
-        { withCredentials: true }
-      );
+      const res = await api.get("/admin/reservations", {
+        withCredentials: true,
+      });
 
       // Convert numeric-key object → array
       const raw = res.data;

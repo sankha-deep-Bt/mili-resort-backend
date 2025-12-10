@@ -6,7 +6,6 @@ import { Input } from "../components/ui/input";
 import { Search, Menu } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useAdmin } from "../hooks/useAdmin";
-import axios from "axios";
 
 // Import admin components
 import AdminSidebar from "../components/admin/AdminSidebar";
@@ -18,6 +17,7 @@ import EventsTab from "../components/admin/EventsTab";
 import OfferTab from "../components/admin/OfferTab";
 
 import toast from "react-hot-toast";
+import api from "../utils/axios";
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
@@ -60,9 +60,7 @@ export default function AdminDashboard() {
 
   const fetchEventRequests = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/v1/reservation/event-enquiry"
-      );
+      const response = await api.get("/reservation/event-enquiry");
       setEventRequests(response.data.data);
     } catch (err) {
       console.error("Event fetch error:", err);
@@ -145,10 +143,10 @@ export default function AdminDashboard() {
   const handleAcceptBooking = async (id: string) => {
     setIsProcessing((p) => ({ ...p, [id]: true }));
     try {
-      await axios.put(
-        "http://localhost:3000/api/v1/admin/reservation/change-status",
-        { reservationId: id, status: "approved" }
-      );
+      await api.put("/admin/reservation/change-status", {
+        reservationId: id,
+        status: "approved",
+      });
       updateBookingStatus?.(id, "approved");
       fetchBookings?.();
       toast.success("Booking approved");
@@ -162,10 +160,10 @@ export default function AdminDashboard() {
   const handleRejectBooking = async (id: string, targetStatus = "rejected") => {
     setIsProcessing((p) => ({ ...p, [id]: true }));
     try {
-      await axios.put(
-        "http://localhost:3000/api/v1/admin/reservation/change-status",
-        { reservationId: id, status: targetStatus }
-      );
+      await api.put("/admin/reservation/change-status", {
+        reservationId: id,
+        status: targetStatus,
+      });
       updateBookingStatus?.(id, targetStatus);
       fetchBookings?.();
       toast.success("Booking rejected");
@@ -179,13 +177,9 @@ export default function AdminDashboard() {
   const handleDeleteBooking = async (ids: string[]) => {
     try {
       if (ids.length === 1) {
-        await axios.delete(
-          `http://localhost:3000/api/v1/reservation/delete-cancel/${ids[0]}`
-        );
+        await api.delete(`/reservation/delete-cancel/${ids[0]}`);
       } else {
-        await axios.delete(
-          "http://localhost:3000/api/v1/reservation/delete-cancel"
-        );
+        await api.delete("/reservation/delete-cancel");
       }
 
       fetchBookings?.();
@@ -198,10 +192,10 @@ export default function AdminDashboard() {
   const handleCheckIn = async (id: string) => {
     setIsProcessing((p) => ({ ...p, [id]: true }));
     try {
-      await axios.put(
-        "http://localhost:3000/api/v1/admin/reservation/change-status",
-        { reservationId: id, status: "checked-in" }
-      );
+      await api.put("/admin/reservation/change-status", {
+        reservationId: id,
+        status: "checked-in",
+      });
       updateBookingStatus?.(id, "checked-in");
       fetchBookings?.();
       toast.success("Checked in");
@@ -214,10 +208,7 @@ export default function AdminDashboard() {
 
   const handleUpdateEventStatus = async (eventId: string, status: string) => {
     try {
-      await axios.patch(
-        `http://localhost:3000/api/v1/reservation/event-enquiry/${eventId}`,
-        { status }
-      );
+      await api.patch(`/reservation/event-enquiry/${eventId}`, { status });
       toast.success(`Event marked as ${status}`);
       fetchEventRequests();
     } catch {
@@ -227,8 +218,8 @@ export default function AdminDashboard() {
 
   // const handleEditRoom = async (roomId: string, data: any) => {
   //   try {
-  //     await axios.put(
-  //       `http://localhost:3000/api/v1/admin/rooms/${roomId}/edit`,
+  //     await api.put(
+  //       `/admin/rooms/${roomId}/edit`,
   //       { data }
   //     );
   //     updateRoomStatus?.(roomId, data);

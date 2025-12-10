@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import {
@@ -11,6 +10,7 @@ import {
 import { ArrowRight, BedDouble, CalendarDays, UserRound } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import api from "../../utils/axios";
 
 interface BookedRoom {
   roomId: string;
@@ -48,7 +48,7 @@ const Overview = ({
       return;
 
     try {
-      await axios.post("http://localhost:3000/api/v1/reservation/cancel", {
+      await api.post("/reservation/cancel", {
         reservationId: bookingId,
       });
 

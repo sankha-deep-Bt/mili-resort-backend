@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Card,
   CardHeader,
@@ -13,6 +12,7 @@ import { Textarea } from "../ui/textarea";
 import "react-datepicker/dist/react-datepicker.css";
 import { Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import api from "../../utils/axios";
 
 export default function OfferTab() {
   const [activeSubTab, setActiveSubTab] = useState<"add" | "list">("add");
@@ -33,9 +33,7 @@ export default function OfferTab() {
   const fetchOffers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        "http://localhost:3000/api/v1/admin/latest-offers"
-      );
+      const res = await api.get("/admin/latest-offers");
       setOffers(res.data?.data || []);
     } catch (err) {
       console.error("Failed to load offers", err);
@@ -69,13 +67,9 @@ export default function OfferTab() {
     formData.append("ctaHref", ctaHref);
 
     try {
-      await axios.post(
-        "http://localhost:3000/api/v1/admin/latest-offers/add",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      await api.post("/admin/latest-offers/add", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       toast.success("Offer created!");
 
@@ -98,9 +92,7 @@ export default function OfferTab() {
   // Delete Offer
   const handleDeleteOffer = async (offerId: string) => {
     try {
-      await axios.delete(
-        `http://localhost:3000/api/v1/admin/latest-offers/${offerId}`
-      );
+      await api.delete(`/admin/latest-offers/${offerId}`);
       toast.success("Offer deleted");
       fetchOffers();
     } catch {

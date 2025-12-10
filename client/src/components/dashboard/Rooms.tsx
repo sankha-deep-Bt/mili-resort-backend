@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState, useMemo, useRef, useEffect } from "react";
 import {
   Card,
@@ -19,6 +18,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import api from "../../utils/axios";
 
 // Helper function to calculate days
 const calculateDays = (start: Date, end: Date): number => {
@@ -48,8 +48,7 @@ const Rooms = ({ onBookingCompleted, Rooms }: RoomsProps) => {
   const [checkOut, setCheckOut] = useState<Date | null>(null);
   const [notes, setNotes] = useState("");
 
-  const fallbackRoomImage =
-    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80";
+  const fallbackRoomImage = "room-fallback";
 
   const firstAdultInputRef = useRef<HTMLInputElement>(null);
 
@@ -163,8 +162,8 @@ const Rooms = ({ onBookingCompleted, Rooms }: RoomsProps) => {
     }));
 
     try {
-      await axios.post(
-        "http://localhost:3000/api/v1/reservation/add",
+      await api.post(
+        "/reservation/add",
         {
           rooms: roomsPayload,
           startDate: checkIn.toISOString(),

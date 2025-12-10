@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import toast from "react-hot-toast";
+import api from "../utils/axios";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -14,8 +14,8 @@ export default function AdminLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(
-        "http://localhost:3000/api/v1/admin/login",
+      await api.post(
+        "/admin/login",
         { email, password },
         { withCredentials: true }
       );

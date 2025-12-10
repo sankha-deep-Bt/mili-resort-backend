@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import api from "../utils/axios";
 
 export interface User {
   _id: string;
@@ -18,7 +18,7 @@ const useUser = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("http://localhost:3000/api/v1/auth/me", {
+      const res = await api.get("/auth/me", {
         withCredentials: true,
       });
 
