@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "../../utils/axios";
 
 type EventHighlight = {
   _id?: string;
@@ -46,9 +46,7 @@ export default function CulturalEvents() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/v1/event/highlight"
-        );
+        const res = await api.get("/event/highlight");
 
         setEvents(res.data.highlights);
       } catch (err) {
