@@ -11,7 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import axios from "axios";
+import api from "../../utils/axios";
 
 const EVENT_TYPES = [
   {
@@ -65,18 +65,15 @@ export default function EventEnquiry() {
     try {
       setIsSubmitting(true);
 
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/reservation/event-enquiry",
-        {
-          name,
-          email,
-          phoneNumber: phone,
-          eventType,
-          eventDate: eventDate || "Not specified",
-          guestCount: guestCount || "Not specified",
-          message: message || "No additional message",
-        }
-      );
+      const res = await api.post("reservation/event-enquiry", {
+        name,
+        email,
+        phoneNumber: phone,
+        eventType,
+        eventDate: eventDate || "Not specified",
+        guestCount: guestCount || "Not specified",
+        message: message || "No additional message",
+      });
       console.log(res.data);
       toast.success("Enquiry sent successfully! We'll contact you soon.");
       form.reset();
