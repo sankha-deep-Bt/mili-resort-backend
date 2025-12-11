@@ -104,7 +104,7 @@ export default function Booking() {
     <div className="relative min-h-[150vh] bg-black overflow-hidden">
       {/* Background */}
       <div
-        className="absolute inset-0 bg-[url('https://harmless-tapir-303.convex.cloud/api/storage/fd28d2ba-8b4e-446e-a217-869b0c321ecc')] bg-cover bg-center"
+        className="absolute inset-0 bg-[url('/booking-image.jpeg')] bg-cover bg-center"
         style={{ backgroundPosition: "50% 100%" }}
       />
       <div className="absolute inset-0 bg-black/20" />
