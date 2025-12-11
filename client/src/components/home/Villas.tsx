@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import axios from "axios";
+import api from "../../utils/axios";
 
 export default function Villas() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,14 +12,8 @@ export default function Villas() {
 
   const fetchRooms = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/v1/reservation/rooms",
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await api.get("/reservation/rooms");
 
-      // IMPORTANT FIX
       setRooms(Array.isArray(res.data.rooms) ? res.data.rooms : []);
     } catch (err) {
       console.error("Room fetch error:", err);
@@ -83,7 +77,7 @@ export default function Villas() {
 
   return (
     <section className="pb-24 bg-stone-50 overflow-hidden mt-7">
-      <div className="container mx-auto px-4 md:px-12 max-w-[83.75rem]">
+      <div className="container mx-auto px-4 md:px-12 max-w-335">
         <div className="relative">
           <div className="overflow-hidden -mx-4">
             <motion.div
@@ -103,12 +97,12 @@ export default function Villas() {
                   className="shrink-0 px-4"
                   style={{ width: `${100 / itemsToShow}%` }}
                 >
-                  <div className="group relative h-[28rem] overflow-hidden cursor-pointer">
+                  <div className="group relative h-112 overflow-hidden cursor-pointer">
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                       style={{ backgroundImage: `url(${room?.image})` }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-60" />
                     <div className="absolute inset-0 flex flex-col justify-end p-8">
                       <div className="border-t-2 border-white/60 pt-4">
                         <h3 className="text-white text-xs font-bold tracking-widest uppercase leading-relaxed">
