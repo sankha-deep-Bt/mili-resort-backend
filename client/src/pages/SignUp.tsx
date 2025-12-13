@@ -1,4 +1,3 @@
-// src/pages/LoginPage.tsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -43,6 +42,16 @@ export default function SignUp() {
 
     if (!email || !password) {
       setFormError("Please fill in both email and password.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setFormError("Passwords do not match.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setFormError("Password must be at least 6 characters.");
       return;
     }
 
