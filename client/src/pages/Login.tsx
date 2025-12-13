@@ -14,6 +14,7 @@ import {
   CardFooter,
 } from "../components/ui/card";
 import { Loader2, Mail, Key, Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const { isAuth, isLoading, error, login } = useAuth();
@@ -42,10 +43,16 @@ export default function Login() {
       return;
     }
 
+    if (password.length < 6) {
+      setFormError("Password must be at least 6 characters.");
+      return;
+    }
+
     try {
       await login(email, password);
     } catch (err: any) {
       setFormError(err?.message || "Login failed. Please try again.");
+      toast.error(err?.message || "Login failed. Please try again.");
       console.log(err.response);
     }
   };

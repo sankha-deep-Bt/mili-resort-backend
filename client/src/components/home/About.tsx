@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 
 export default function About() {
   return (
-    <section className="flex flex-col md:flex-row min-h-[80vh]">
+    <section id="about" className="flex flex-col md:flex-row min-h-[80vh]">
       <div
-        className="w-full md:w-[70%] bg-[url('https://harmless-tapir-303.convex.cloud/api/storage/e0f11dea-48ab-4a48-942e-45bb265fdece')] bg-cover bg-center min-h-[50vh]"
+        className="w-full md:w-[70%] bg-[url('/about-image.jpg')] bg-cover bg-center min-h-[50vh]"
         style={{ backgroundPosition: "25% 50%" }}
       />
       <div className="w-full md:w-[37%] bg-primary text-white flex flex-col justify-center py-12 px-8 md:px-20 text-center">

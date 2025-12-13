@@ -13,6 +13,7 @@ import {
   CardFooter,
 } from "../components/ui/card";
 import { Loader2, Mail, Key, Text, Phone, Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function SignUp() {
   const { isAuth, isLoading, error, signUp } = useAuth();
@@ -42,16 +43,20 @@ export default function SignUp() {
 
     if (!email || !password) {
       setFormError("Please fill in both email and password.");
+      toast.error("Please fill in both email and password.");
       return;
     }
 
     if (password !== confirmPassword) {
       setFormError("Passwords do not match.");
+      toast.error("Passwords do not match.");
+
       return;
     }
 
     if (password.length < 6) {
       setFormError("Password must be at least 6 characters.");
+      toast.error("Password must be at least 6 characters.");
       return;
     }
 

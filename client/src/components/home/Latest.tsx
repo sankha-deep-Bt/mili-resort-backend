@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "../../utils/axios";
 
 type OfferCard = {
   id: string;
@@ -122,9 +122,7 @@ export default function Latest({
   const fetchOffers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        "http://localhost:3000/api/v1/admin/latest-offers"
-      );
+      const res = await api.get("/admin/latest-offers");
       // ensure offers is always an array
       setOffers(res.data?.data || []);
     } catch (err) {
