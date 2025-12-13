@@ -7,7 +7,7 @@ import { useAuth } from "../../hooks/useAuth"; // <-- added
 const menuItems = [
   { name: "Home", href: "/" },
   { name: "Our Premium Rooms", href: "/rooms" },
-  { name: "About", href: "/#about" },
+  { name: "About", href: "/about" },
   { name: "Packages", href: "/#packages" },
   { name: "Latest Offers", href: "/#latest-offers" },
   { name: "Food & Beverages", href: "/dining" },

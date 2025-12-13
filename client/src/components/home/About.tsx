@@ -26,7 +26,7 @@ export default function About() {
             celebration.
           </p>
           <a
-            href="#"
+            href="/about"
             className="inline-block px-10 py-5 border-2 border-white text-white text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-primary transition-colors"
           >
             Our Story

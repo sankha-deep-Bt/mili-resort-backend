@@ -15,6 +15,7 @@ import Rooms from "./pages/Rooms";
 import SignUp from "./pages/SignUp";
 import PaymentPage from "./pages/PaymentPage";
 import Success from "./pages/Success";
+import OurStory from "./pages/OurStory";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/dining" element={<Dining />} />
       <Route path="/rooms" element={<Rooms />} />
+      <Route path="/about" element={<OurStory />} />
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/delivery-policy" element={<DeliveryPolicy />} />
       <Route path="/refund-policy" element={<RefundPolicy />} />
