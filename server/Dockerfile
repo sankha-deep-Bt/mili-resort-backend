@@ -21,8 +21,8 @@ COPY . .
 RUN npm run build
 
 # 1. Copy the entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# COPY docker-entrypoint.sh /usr/local/bin/
+# RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Cleanup the build-time ENV
 # ENV MONGO_URI= # No longer needed if not set above
@@ -32,7 +32,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 EXPOSE 3000
 
 # 2. Set the entrypoint to run the script
-ENTRYPOINT ["docker-entrypoint.sh"]
+# ENTRYPOINT ["docker-entrypoint.sh"]
 
 # 3. Set the command that the entrypoint script will execute last (the "$@" in the script)
 CMD ["npm", "start"]
