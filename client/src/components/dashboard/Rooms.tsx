@@ -166,8 +166,8 @@ const Rooms = ({ onBookingCompleted, Rooms }: RoomsProps) => {
         "/reservation/add",
         {
           rooms: roomsPayload,
-          startDate: checkIn.toISOString(),
-          endDate: checkOut.toISOString(),
+          startDate: checkIn,
+          endDate: checkOut,
           adult: totalAdults,
           children: totalChildren,
           notes,

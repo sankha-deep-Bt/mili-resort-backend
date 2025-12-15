@@ -5,8 +5,17 @@ export const sendReservationEmail = async (
   status: string
 ) => {
   // Destructure top-level properties. 'room' is replaced by 'rooms'.
-  const { _id, rooms, user, startDate, endDate, adult, children, notes, food } =
-    reservation;
+  const {
+    _id,
+    rooms,
+    user,
+    startDate,
+    endDate,
+    adult,
+    children,
+    notes,
+    amount,
+  } = reservation;
 
   // -----------------------------
   // 1. TOTAL PRICE PER NIGHT
@@ -20,8 +29,8 @@ export const sendReservationEmail = async (
   // -----------------------------
   const RoomName =
     rooms.map((room: any) => room.name).join(", ") || "Rooms Selected";
-  const start = startDate.toISOString().split("T")[0];
-  const end = endDate.toISOString().split("T")[0];
+  const start = startDate.toLocaleDateString();
+  const end = endDate.toLocaleDateString();
   const guests = Number(adult) + Number(children);
 
   // -----------------------------
@@ -86,7 +95,7 @@ export const sendReservationEmail = async (
             <li><strong>Check-in:</strong> ${start}</li>
             <li><strong>Check-out:</strong> ${end}</li>
             <li><strong>Guests:</strong> ${adult} adult(s), ${children} child(ren)</li>
-            <li><strong>Total Amount Due:</strong> <strong style="color: #5b21b6;">₹${totalPricePerNight.toLocaleString()}</strong></li>
+            <li><strong>Total Amount Due:</strong> <strong style="color: #5b21b6;">₹${amount}</strong></li>
         </ul>
 
         <h4>Booked Rooms:</h4>
@@ -114,7 +123,7 @@ export const sendReservationEmail = async (
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
         <h2 style="color: #15803d;">Welcome, ${user.name}!</h2>
 
-        <p>We are excited to let you know that your check-in at <strong>Mili's Resort</strong> has been successfully completed.</p>
+        <p>We are excited to let you know that your check-in at <strong>Mili Resort</strong> has been successfully completed.</p>
 
         <h3>Your Stay Details</h3>
         <ul style="list-style: none; padding: 0;">
@@ -132,14 +141,6 @@ export const sendReservationEmail = async (
         ${
           notes
             ? `<p style="margin-top: 12px;"><strong>Notes:</strong> ${notes}</p>`
-            : ""
-        }
-
-        ${
-          food && food.length > 0
-            ? `<p><strong>Selected Food Options:</strong> ${food.join(
-                ", "
-              )}</p>`
             : ""
         }
 
