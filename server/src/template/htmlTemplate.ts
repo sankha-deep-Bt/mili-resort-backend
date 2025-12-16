@@ -27,10 +27,19 @@ export const sendReservationEmail = async (
   // -----------------------------
   // 2. FIRST ROOM NAME (FOR URL)
   // -----------------------------
+
+  const formatIST = (date: Date) =>
+    new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(date);
+
   const RoomName =
     rooms.map((room: any) => room.name).join(", ") || "Rooms Selected";
-  const start = startDate.toLocaleDateString();
-  const end = endDate.toLocaleDateString();
+  const start = formatIST(startDate);
+  const end = formatIST(endDate);
   const guests = Number(adult) + Number(children);
 
   // -----------------------------

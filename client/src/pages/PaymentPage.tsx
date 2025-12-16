@@ -68,12 +68,14 @@ const PaymentPage = () => {
     fetchReservation();
   }, [reservationId]);
 
-  const days =
-    Math.max(
-      1,
-      (new Date(endDate!).getTime() - new Date(startDate!).getTime()) /
+  const days = Math.max(
+    1,
+    Math.ceil(
+      (new Date(endDate!).setHours(0, 0, 0, 0) -
+        new Date(startDate!).setHours(0, 0, 0, 0)) /
         (1000 * 60 * 60 * 24)
-    ) || 1;
+    )
+  );
 
   const amount = price * days;
 
@@ -118,7 +120,7 @@ const PaymentPage = () => {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: order.amount,
       currency: "INR",
-      name: "Mili's Resort",
+      name: "Mili Resort",
       description: `Payment for ${roomName}`,
       order_id: order.id,
       handler: async (response: any) => {
