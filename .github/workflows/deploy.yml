@@ -1,4 +1,4 @@
-name: Simple VPS Docker Deploy
+name: VPS Docker Deploy
 
 on:
   push:
